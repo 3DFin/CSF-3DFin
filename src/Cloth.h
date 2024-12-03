@@ -73,7 +73,6 @@ private:
   
   static constexpr int max_particle_for_post_processing = 50;
   int constraint_iterations;
-
   int rigidness;
   double time_step;
 
@@ -101,11 +100,12 @@ public:
 public:
   int getSize() { return num_particles_width * num_particles_height; }
 
-  //size_t get1DIndex(int x, int y) { return y * num_particles_width + x; }
-
   inline std::vector<double> &getHeightvals() { return height_values; }
 
+  const std::vector<Particle>& getParticles() { return particles; }
+
   Particle *getParticle1d(int index) { return &particles[index]; }
+  
 
 public:
   /* This is a important constructor for the entire system of

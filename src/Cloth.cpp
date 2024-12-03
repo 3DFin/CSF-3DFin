@@ -23,7 +23,7 @@ Cloth::Cloth(const Vec3 &_origin_pos, int _num_particles_width,
              int _num_particles_height, double _step_x, double _step_y,
              double _smoothThreshold, double _heightThreshold, int rigidness,
              double time_step)
-    : constraint_iterations(rigidness), time_step(time_step),
+    : constraint_iterations(rigidness),
       smoothThreshold(_smoothThreshold), heightThreshold(_heightThreshold),
       origin_pos(_origin_pos), step_x(_step_x), step_y(_step_y),
       num_particles_width(_num_particles_width),
@@ -314,7 +314,7 @@ void Cloth::handle_slop_connected(
     const std::vector<std::vector<int>> &neighbors) {
   std::vector<bool> visited;
 
-  for (std::size_t i = 0; i < connected.size(); i++)
+  for (size_t i = 0; i < connected.size(); i++)
     visited.push_back(false);
 
   std::queue<int> queue;

@@ -25,18 +25,7 @@
 #include "c2cdist.h"
 #include <fstream>
 
-CSF::CSF() {
-  params.bSloopSmooth = true;
-  params.time_step = 0.65;
-  params.class_threshold = 0.5;
-  params.cloth_resolution = 1;
-  params.rigidness = 3;
-  params.interations = 500;
-}
-
-CSF::~CSF() {}
-
-void CSF::setPointCloud(std::vector<csf::Point> points) {
+void CSF::setPointCloud(const std::vector<csf::Point> &points) {
   point_cloud.resize(points.size());
 
   int pointCount = static_cast<int>(points.size());
@@ -52,15 +41,7 @@ void CSF::setPointCloud(std::vector<csf::Point> points) {
   }
 }
 
-void CSF::setPointCloud(double *points, int rows, int cols) {
-  point_cloud.resize(rows);
-#define A(i, j) points[i * cols + j]
-  for (int i = 0; i < rows; i++) {
-    point_cloud[i] = {A(i, 0), -A(i, 2), A(i, 1)};
-  }
-}
-
-void CSF::setPointCloud(double *points, int rows) {
+void CSF::setPointCloud(const double *points, const int rows) {
 #define Mat(i, j) points[i + j * rows]
   point_cloud.resize(rows);
   for (int i = 0; i < rows; i++) {
@@ -69,21 +50,11 @@ void CSF::setPointCloud(double *points, int rows) {
 }
 
 void CSF::setPointCloud(csf::PointCloud &pc) {
-  point_cloud.resize(pc.size());
   int pointCount = static_cast<int>(pc.size());
-#ifdef CSF_USE_OPENMP
-#pragma omp parallel for
-#endif
-  for (int i = 0; i < pointCount; i++) {
-    csf::Point las;
-    las.x = pc[i].x;
-    las.y = -pc[i].z;
-    las.z = pc[i].y;
-    point_cloud[i] = las;
-  }
+  point_cloud = pc;
 }
 
-void CSF::readPointsFromFile(std::string filename) {
+void CSF::readPointsFromFile(const std::string &filename) {
   this->point_cloud.resize(0);
   read_xyz(filename, this->point_cloud);
 }
@@ -145,13 +116,9 @@ Cloth CSF::do_cloth() {
   return cloth;
 }
 
-std::vector<double> CSF::do_cloth_export() {
-  auto cloth = do_cloth();
-  return cloth.toVector();
-}
-
 void CSF::do_filtering(std::vector<int> &groundIndexes,
-                       std::vector<int> &offGroundIndexes, bool exportCloth) {
+                       std::vector<int> &offGroundIndexes,
+                       const bool exportCloth) {
   auto cloth = do_cloth();
   if (exportCloth)
     cloth.saveToFile();
@@ -159,7 +126,8 @@ void CSF::do_filtering(std::vector<int> &groundIndexes,
   c2c.calCloud2CloudDist(cloth, point_cloud, groundIndexes, offGroundIndexes);
 }
 
-void CSF::savePoints(std::vector<int> grp, std::string path) {
+void CSF::savePoints(const std::vector<int> &grp,
+                     const std::string &path) const {
   if (path == "") {
     return;
   }
