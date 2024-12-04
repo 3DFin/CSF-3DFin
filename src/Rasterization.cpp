@@ -25,8 +25,11 @@ double Rasterization::findHeightValByScanline(Particle* p, Cloth& cloth)
 {
     int xpos = p->pos_x;
     int ypos = p->pos_y;
+    int cloth_width, cloth_height;
+    
+    std::tie(cloth_width, cloth_height) = cloth.getGridSize();
 
-    for (int i = xpos + 1; i < cloth.num_particles_width; i++)
+    for (int i = xpos + 1; i < cloth_width; i++)
     {
         const double crresHeight = cloth.getParticle(i, ypos)->nearest_point_height;
 
@@ -47,7 +50,7 @@ double Rasterization::findHeightValByScanline(Particle* p, Cloth& cloth)
         if (crresHeight > MIN_INF) return crresHeight;
     }
 
-    for (int j = ypos + 1; j < cloth.num_particles_height; j++)
+    for (int j = ypos + 1; j < cloth_height; j++)
     {
         const double crresHeight = cloth.getParticle(xpos, j)->nearest_point_height;
 

@@ -115,6 +115,8 @@ public:
 
     int getSize() { return num_particles_width * num_particles_height; }
 
+    std::pair<int, int> getGridSize(){return std::make_pair(num_particles_width, num_particles_height);}
+
     inline std::vector<double>& getHeightvals() { return height_values; }
 
     const std::vector<Particle>& getParticles() { return particles; }
@@ -123,8 +125,6 @@ public:
     Vec3                origin_pos;
     double              step_x, step_y;
     std::vector<double> height_values;  // height values
-    int                 num_particles_width;  // number of particles in width direction
-    int                 num_particles_height;  // number of particles in height direction
 
    private:
     // post processing is only for connected component which is large than 50
@@ -134,6 +134,9 @@ public:
     double               time_step;
 
     std::vector<Particle> particles;  // all particles that are part of this cloth
+
+    int                 num_particles_width;  // number of particles in width direction
+    int                 num_particles_height;  // number of particles in height direction
 
     double smoothThreshold;
     double heightThreshold;
