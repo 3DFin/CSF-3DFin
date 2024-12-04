@@ -29,80 +29,81 @@
 // cloth simulation filter for airborne lidar filtering
 #pragma once
 
-#include "Cloth.h"
-#include "point_cloud.h"
 #include <string>
 #include <vector>
 
-struct Params {
-  // refer to the website:http://ramm.bnu.edu.cn/projects/CSF/ for the setting
-  // of these paramters
-  bool bSloopSmooth = true;
-  double time_step = 0.65;
-  double class_threshold = 0.5;
-  double cloth_resolution = 1;
-  int rigidness = 3;
-  int interations = 500;
+#include "Cloth.h"
+#include "point_cloud.h"
+
+struct Params
+{
+    // refer to the website:http://ramm.bnu.edu.cn/projects/CSF/ for the setting
+    // of these paramters
+    bool   bSloopSmooth     = true;
+    double time_step        = 0.65;
+    double class_threshold  = 0.5;
+    double cloth_resolution = 1;
+    int    rigidness        = 3;
+    int    interations      = 500;
 };
 
 #ifdef _CSF_DLL_EXPORT_
 #ifdef DLL_IMPLEMENT
 #define DLL_API __declspec(dllexport)
-#else // ifdef DLL_IMPLEMENT
+#else  // ifdef DLL_IMPLEMENT
 #define DLL_API __declspec(dllimport)
-#endif // ifdef DLL_IMPLEMENT
-#endif // ifdef _CSF_DLL_EXPORT_
+#endif  // ifdef DLL_IMPLEMENT
+#endif  // ifdef _CSF_DLL_EXPORT_
 
 #ifdef _CSF_DLL_EXPORT_
 class DLL_API CSF
 #else  // ifdef _CSF_DLL_EXPORT_
 class CSF
-#endif // ifdef _CSF_DLL_EXPORT_
+#endif  // ifdef _CSF_DLL_EXPORT_
 {
-public:
-  CSF() = default;
-  ~CSF() = default;
+   public:
+    CSF()  = default;
+    ~CSF() = default;
 
-  // set pointcloud from vector
-  void setPointCloud(const std::vector<csf::Point> &points);
+    // set pointcloud from vector
+    void setPointCloud(const std::vector<csf::Point>& points);
 
-  // set point cloud from a one-dimensional array. it defines a N*3 point cloud
-  // by the given rows. it is the method used to set point cloud from matlab and
-  // numpy
-  void setPointCloud(const double *points, const int rows);
+    // set point cloud from a one-dimensional array. it defines a N*3 point cloud
+    // by the given rows. it is the method used to set point cloud from matlab and
+    // numpy
+    void setPointCloud(const double* points, const int rows);
 
-  // read pointcloud from txt file: (X Y Z) for each line
-  void readPointsFromFile(const std::string &filename);
+    // read pointcloud from txt file: (X Y Z) for each line
+    void readPointsFromFile(const std::string& filename);
 
-  inline csf::PointCloud &getPointCloud() { return point_cloud; }
+    inline csf::PointCloud& getPointCloud() { return point_cloud; }
 
-  inline const csf::PointCloud &getPointCloud() const { return point_cloud; }
+    inline const csf::PointCloud& getPointCloud() const { return point_cloud; }
 
-  // save points to file
-  void savePoints(const std::vector<int> &grp, const std::string &path) const;
+    // save points to file
+    void savePoints(const std::vector<int>& grp, const std::string& path) const;
 
-  // get size of pointcloud
-  size_t size() { return point_cloud.size(); }
+    // get size of pointcloud
+    size_t size() { return point_cloud.size(); }
 
-  // PointCloud set pointcloud
-  void setPointCloud(csf::PointCloud &pc);
+    // PointCloud set pointcloud
+    void setPointCloud(csf::PointCloud& pc);
 
-  // The results are index of ground points in the original
-  // pointcloud and write the cloth particles coordinates
-  void do_filtering(std::vector<int> &groundIndexes,
-                    std::vector<int> &offGroundIndexes,
-                    const bool exportCloth = true);
-  // Do the filtering and return the Cloth object
-  Cloth do_cloth();
+    // The results are index of ground points in the original
+    // pointcloud and write the cloth particles coordinates
+    void do_filtering(
+        std::vector<int>& groundIndexes, std::vector<int>& offGroundIndexes, const bool exportCloth = true);
+    // Do the filtering and return the Cloth object
+    Cloth do_cloth();
 
-private:
+   private:
 #ifdef _CSF_DLL_EXPORT_
-  class __declspec(dllexport) csf::PointCloud point_cloud;
+    class __declspec(dllexport) csf::PointCloud point_cloud;
 #else  // ifdef _CSF_DLL_EXPORT_
-  csf::PointCloud point_cloud;
-#endif // ifdef _CSF_DLL_EXPORT_
+    csf::PointCloud point_cloud;
+#endif  // ifdef _CSF_DLL_EXPORT_
 
-public:
-  Params params;
-  int index;
+   public:
+    Params params;
+    int    index;
 };

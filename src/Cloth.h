@@ -40,9 +40,10 @@
 #ifdef _WIN32
 #define NOMINMAX
 #include <windows.h>
-#endif // ifdef _WIN32
-#include <iostream>
+#endif  // ifdef _WIN32
 #include <math.h>
+
+#include <iostream>
 #include <vector>
 #ifdef CSF_USE_OPENMP
 #include <omp.h>
@@ -56,85 +57,84 @@
 #include "Particle.h"
 #include "Vec3.h"
 
+struct XY
+{
+    XY(int x1, int y1)
+    {
+        x = x1;
+        y = y1;
+    }
 
-struct XY {
-  XY(int x1, int y1) {
-    x = x1;
-    y = y1;
-  }
-
-  int x;
-  int y;
+    int x;
+    int y;
 };
 
-class Cloth {
-private:
-  // post processing is only for connected component which is large than 50
-  
-  static constexpr int max_particle_for_post_processing = 50;
-  int constraint_iterations;
-  int rigidness;
-  double time_step;
+class Cloth
+{
+   private:
+    // post processing is only for connected component which is large than 50
 
-  std::vector<Particle> particles; // all particles that are part of this cloth
+    static constexpr int max_particle_for_post_processing = 50;
+    int                  constraint_iterations;
+    int                  rigidness;
+    double               time_step;
 
-  double smoothThreshold;
-  double heightThreshold;
+    std::vector<Particle> particles;  // all particles that are part of this cloth
 
-public:
-  Vec3 origin_pos;
-  double step_x, step_y;
-  std::vector<double> height_values; // height values
-  int num_particles_width;           // number of particles in width direction
-  int num_particles_height;          // number of particles in height direction
+    double smoothThreshold;
+    double heightThreshold;
 
-  Particle *getParticle(int x, int y) {
-    return &particles[y * num_particles_width + x];
-  }
+   public:
+    Vec3                origin_pos;
+    double              step_x, step_y;
+    std::vector<double> height_values;  // height values
+    int                 num_particles_width;  // number of particles in width direction
+    int                 num_particles_height;  // number of particles in height direction
 
-  void makeConstraint(Particle *p1, Particle *p2) {
-    p1->neighborsList.push_back(p2);
-    p2->neighborsList.push_back(p1);
-  }
+    Particle* getParticle(int x, int y) { return &particles[y * num_particles_width + x]; }
 
-public:
-  int getSize() { return num_particles_width * num_particles_height; }
+    void makeConstraint(Particle* p1, Particle* p2)
+    {
+        p1->neighborsList.push_back(p2);
+        p2->neighborsList.push_back(p1);
+    }
 
-  inline std::vector<double> &getHeightvals() { return height_values; }
+   public:
+    int getSize() { return num_particles_width * num_particles_height; }
 
-  const std::vector<Particle>& getParticles() { return particles; }
+    inline std::vector<double>& getHeightvals() { return height_values; }
 
-  Particle *getParticle1d(int index) { return &particles[index]; }
-  
+    const std::vector<Particle>& getParticles() { return particles; }
 
-public:
-  /* This is a important constructor for the entire system of
-   * particles and constraints */
-  Cloth(const Vec3 &origin_pos, int num_particles_width,
-        int num_particles_height, double step_x, double step_y,
-        double smoothThreshold, double heightThreshold, int rigidness,
-        double time_step);
+    Particle* getParticle1d(int index) { return &particles[index]; }
 
-  /* this is an important methods where the time is progressed one
-   * time step for the entire cloth.  This includes calling
-   * satisfyConstraint() for every constraint, and calling
-   * timeStep() for all particles
-   */
-  double timeStep();
+   public:
+    /* This is a important constructor for the entire system of
+     * particles and constraints */
+    Cloth(
+        const Vec3& origin_pos, int num_particles_width, int num_particles_height, double step_x, double step_y,
+        double smoothThreshold, double heightThreshold, int rigidness, double time_step);
 
-  void terrCollision();
+    /* this is an important methods where the time is progressed one
+     * time step for the entire cloth.  This includes calling
+     * satisfyConstraint() for every constraint, and calling
+     * timeStep() for all particles
+     */
+    double timeStep();
 
-  void movableFilter();
+    void terrCollision();
 
-  std::vector<int> findUnmovablePoint(const std::vector<XY> & connected);
+    void movableFilter();
 
-  void handle_slop_connected(const std::vector<int> &edgePoints,
-                             const std::vector<XY> &connected,
-                             const std::vector<std::vector<int>> &neighbors);
+    std::vector<int> findUnmovablePoint(const std::vector<XY>& connected);
 
-  void saveToFile(std::string path = "");
+    void handle_slop_connected(
+        const std::vector<int>& edgePoints, const std::vector<XY>& connected,
+        const std::vector<std::vector<int>>& neighbors);
 
-  std::vector<double> toVector();
+    void saveToFile(std::string path = "");
 
-  void saveMovableToFile(std::string path = "");
+    std::vector<double> toVector();
+
+    void saveMovableToFile(std::string path = "");
 };

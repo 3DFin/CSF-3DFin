@@ -21,19 +21,18 @@
 #include "Cloth.h"
 #include "point_cloud.h"
 
-#define SQUARE_DIST(x1, y1, x2, y2)                                            \
-  (((x1) - (x2)) * ((x1) - (x2)) + ((y1) - (y2)) * ((y1) - (y2)))
+#define SQUARE_DIST(x1, y1, x2, y2) (((x1) - (x2)) * ((x1) - (x2)) + ((y1) - (y2)) * ((y1) - (y2)))
 
-class Rasterization {
-public:
-  Rasterization() {}
-  ~Rasterization() {}
+class Rasterization
+{
+   public:
+    Rasterization() {}
+    ~Rasterization() {}
 
-  // for a cloth particle, if no corresponding lidar point are found.
-  // the heightval are set as its neighbor's
-  double static findHeightValByNeighbor(Particle *p);
-  double static findHeightValByScanline(Particle *p, Cloth &cloth);
+    // for a cloth particle, if no corresponding lidar point are found.
+    // the heightval are set as its neighbor's
+    double static findHeightValByNeighbor(Particle* p);
+    double static findHeightValByScanline(Particle* p, Cloth& cloth);
 
-  void static Rasterize(Cloth &cloth, const csf::PointCloud &pc,
-                        std::vector<double> &heightVal);
+    void static Rasterize(Cloth& cloth, const csf::PointCloud& pc, std::vector<double>& heightVal);
 };

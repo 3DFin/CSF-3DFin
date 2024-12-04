@@ -23,5 +23,4 @@
 
 #include "point_cloud.h"
 
-void read_xyz(std::string fname, csf::PointCloud &pointcloud);
-
+void read_xyz(std::string fname, csf::PointCloud& pointcloud);

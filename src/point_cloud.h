@@ -30,25 +30,30 @@
 
 #include <vector>
 
-namespace csf {
+namespace csf
+{
 
-struct Point {
-  union {
-    struct {
-      double x;
-      double y;
-      double z;
+struct Point
+{
+    union
+    {
+        struct
+        {
+            double x;
+            double y;
+            double z;
+        };
+        double u[3];
     };
-    double u[3];
-  };
 
-  Point() : x(0), y(0), z(0) {}
-  Point(const double x, const double y, const double z) : x(x), y(y), z(z) {}
+    Point() : x(0), y(0), z(0) {}
+    Point(const double x, const double y, const double z) : x(x), y(y), z(z) {}
 };
 
-class PointCloud : public std::vector<Point> {
-public:
-  void computeBoundingBox(Point &bbMin, Point &bbMax);
+class PointCloud : public std::vector<Point>
+{
+   public:
+    void computeBoundingBox(Point& bbMin, Point& bbMax);
 };
 
-} // namespace csf
+}  // namespace csf
