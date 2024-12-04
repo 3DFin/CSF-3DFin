@@ -26,7 +26,7 @@ void c2cdist::calCloud2CloudDist(
     groundIndexes.resize(0);
     offGroundIndexes.resize(0);
 
-    for (std::size_t i = 0; i < pc.size(); i++)
+    for (size_t i = 0; i < pc.size(); i++)
     {
         double pc_x = pc[i].x;
         double pc_z = pc[i].z;

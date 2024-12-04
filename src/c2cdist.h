@@ -26,7 +26,7 @@ class c2cdist
    public:
     c2cdist(double threshold) : class_treshold(threshold) {}
 
-    ~c2cdist() {}
+    ~c2cdist() = default;
 
    public:
     void calCloud2CloudDist(

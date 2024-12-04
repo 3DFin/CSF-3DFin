@@ -36,7 +36,7 @@ void Particle::satisfyConstraintSelf(int constraintTimes)
 {
     Particle* p1 = this;
 
-    for (std::size_t i = 0; i < neighborsList.size(); i++)
+    for (size_t i = 0; i < neighborsList.size(); i++)
     {
         Particle*    p2                = neighborsList[i];
         const double correction_factor = p2->height - p1->height;

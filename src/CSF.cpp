@@ -27,24 +27,6 @@
 #include "XYZReader.h"
 #include "c2cdist.h"
 
-void CSF::setPointCloud(const std::vector<csf::Point>& points)
-{
-    point_cloud.resize(points.size());
-
-    int pointCount = static_cast<int>(points.size());
-#ifdef CSF_USE_OPENMP
-#pragma omp parallel for
-#endif
-    for (int i = 0; i < pointCount; i++)
-    {
-        csf::Point las;
-        las.x          = points[i].x;
-        las.y          = -points[i].z;
-        las.z          = points[i].y;
-        point_cloud[i] = las;
-    }
-}
-
 void CSF::setPointCloud(const double* points, const int rows)
 {
 #define Mat(i, j) points[i + j * rows]
@@ -137,7 +119,7 @@ void CSF::savePoints(const std::vector<int>& grp, const std::string& path) const
 
     if (!f1) return;
 
-    for (std::size_t i = 0; i < grp.size(); i++)
+    for (size_t i = 0; i < grp.size(); i++)
     {
         f1 << std::fixed << std::setprecision(8) << point_cloud[grp[i]].x << "	" << point_cloud[grp[i]].z << "	"
            << -point_cloud[grp[i]].y << std::endl;

@@ -65,9 +65,6 @@ class CSF
     CSF()  = default;
     ~CSF() = default;
 
-    // set pointcloud from vector
-    void setPointCloud(const std::vector<csf::Point>& points);
-
     // set point cloud from a one-dimensional array. it defines a N*3 point cloud
     // by the given rows. it is the method used to set point cloud from matlab and
     // numpy
@@ -96,14 +93,10 @@ class CSF
     // Do the filtering and return the Cloth object
     Cloth do_cloth();
 
-   private:
-#ifdef _CSF_DLL_EXPORT_
-    class __declspec(dllexport) csf::PointCloud point_cloud;
-#else  // ifdef _CSF_DLL_EXPORT_
-    csf::PointCloud point_cloud;
-#endif  // ifdef _CSF_DLL_EXPORT_
-
    public:
     Params params;
     int    index;
+
+   private:
+    csf::PointCloud point_cloud;
 };

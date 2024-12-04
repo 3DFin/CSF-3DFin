@@ -21,8 +21,6 @@
 #include "Cloth.h"
 #include "point_cloud.h"
 
-#define SQUARE_DIST(x1, y1, x2, y2) (((x1) - (x2)) * ((x1) - (x2)) + ((y1) - (y2)) * ((y1) - (y2)))
-
 class Rasterization
 {
    public:
@@ -35,4 +33,10 @@ class Rasterization
     double static findHeightValByScanline(Particle* p, Cloth& cloth);
 
     void static Rasterize(Cloth& cloth, const csf::PointCloud& pc, std::vector<double>& heightVal);
+
+   private:
+    static inline double square_dist(double x1, double y1, double x2, double y2)
+    {
+        return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+    }
 };

@@ -43,7 +43,7 @@ class Vec3
     Vec3 normalized()
     {
         double l = length();
-
+        
         return Vec3(f[0] / l, f[1] / l, f[2] / l);
     }
 

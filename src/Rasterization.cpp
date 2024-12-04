@@ -128,8 +128,9 @@ void Rasterization::Rasterize(Cloth& cloth, const csf::PointCloud& pc, std::vect
         if ((col >= 0) && (row >= 0))
         {
             Particle*    particle = cloth.getParticle(col, row);
+            
             const double point_to_particle_dist =
-                SQUARE_DIST(point.x, point.z, particle->initial_pos.f[0], particle->initial_pos.f[2]);
+                square_dist(point.x, point.z, particle->initial_pos.f[0], particle->initial_pos.f[2]);
 
             if (point_to_particle_dist < particle->tmp_dist)
             {
@@ -142,7 +143,7 @@ void Rasterization::Rasterize(Cloth& cloth, const csf::PointCloud& pc, std::vect
     heightVal.resize(cloth.getSize());
     for (int i = 0; i < cloth.getSize(); i++)
     {
-        Particle*    pcur           = cloth.getParticle1d(i);
+        Particle*    pcur           = cloth.getParticle(i);
         const double nearest_height = pcur->nearest_point_height;
 
         if (nearest_height > MIN_INF) { heightVal[i] = nearest_height; }
