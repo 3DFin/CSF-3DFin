@@ -67,8 +67,8 @@ double Rasterization::findHeightValByNeighbor(Particle& p)
     std::vector<Particle*> pbacklist;
 
     // TODO RJ: this algorithm left the visited flag of some particles to "true"
-    // it should be reseted to "false" after the algorithm is done because this
-    // flag is reused in the cloth simultation. This is a bug with minor
+    // it should be reset to "false" after the algorithm is done because this
+    // flag is reused in the cloth simulation. This is a bug with minor
     // consequences it seems to apply only to particles with id 0,1,
     // particle_number-1 and particle_number-2
 

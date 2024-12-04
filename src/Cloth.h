@@ -99,8 +99,6 @@ public:
 
     void saveToFile(std::string path = "");
 
-    std::vector<double> toVector();
-
     void saveMovableToFile(std::string path = "");
 
     Particle& getParticle(int x, int y) { return particles[y * num_particles_width + x]; }
@@ -117,7 +115,7 @@ public:
 
     int getSize() const { return num_particles_width * num_particles_height; }
 
-    std::pair<int, int> getGridSize(){return std::make_pair(num_particles_width, num_particles_height);}
+    std::pair<int, int> getGridSize() const {return std::make_pair(num_particles_width, num_particles_height);}
 
     std::vector<double>& getHeightvals() { return height_values; }
 

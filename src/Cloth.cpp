@@ -340,9 +340,8 @@ void Cloth::handle_slop_connected(
     const std::vector<int>& edgePoints, const std::vector<XY>& connected,
     const std::vector<std::vector<int>>& neighbors)
 {
-    std::vector<bool> visited;
-
-    for (size_t i = 0; i < connected.size(); i++) visited.push_back(false);
+    std::vector<bool> visited(connected.size(), false);
+    
 
     std::queue<int> queue;
 
@@ -378,19 +377,6 @@ void Cloth::handle_slop_connected(
             }
         }
     }
-}
-
-std::vector<double> Cloth::toVector()
-{
-    std::vector<double> clothCoordinates;
-    clothCoordinates.reserve(particles.size() * 3);
-    for (auto& particle : particles)
-    {
-        clothCoordinates.push_back(particle.initial_pos.f[0]);
-        clothCoordinates.push_back(particle.initial_pos.f[2]);
-        clothCoordinates.push_back(-particle.height);
-    }
-    return clothCoordinates;
 }
 
 void Cloth::saveToFile(std::string path)
