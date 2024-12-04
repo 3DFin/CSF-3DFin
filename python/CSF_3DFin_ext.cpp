@@ -13,12 +13,12 @@ NB_MODULE(CSF_3DFin_ext, m)
 
     nb::class_<Params>(m, "CSFParams")
         .def(nb::init<>())
-        .def_rw("smooth_slope", &Params::bSloopSmooth)
+        .def_rw("smooth_slope", &Params::smooth_slope)
         .def_rw("time_step", &Params::time_step)
         .def_rw("class_threshold", &Params::class_threshold)
         .def_rw("cloth_resolution", &Params::cloth_resolution)
         .def_rw("rigidness", &Params::rigidness)
-        .def_rw("iterations", &Params::interations);
+        .def_rw("iterations", &Params::iterations);
 
     nb::class_<CSF>(m, "CSF")
         .def(nb::init<>())

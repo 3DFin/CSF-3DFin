@@ -69,13 +69,12 @@ int main(int argc,char* argv[])
 	start = clock();
 
 	//In real application, the point cloud may be provided by main program
-	//csf.setPointCloud(pc);//pc is PointCloud class
 
 	//step 2 parameter setting
-	csf.params.bSloopSmooth = ss;
+	csf.params.smooth_slope = ss;
 	csf.params.class_threshold = atof(class_threshold.c_str());
 	csf.params.cloth_resolution = atof(cloth_resolution.c_str());
-	csf.params.interations = atoi(iterations.c_str());
+	csf.params.iterations = atoi(iterations.c_str());
 	csf.params.rigidness = atoi(rigidness.c_str());
 	csf.params.time_step = atof(time_step.c_str());
 

@@ -38,7 +38,7 @@ public:
 		{
 			cfgFile.getline(tmp, 1000);
 			std::string line(tmp);
-			std::size_t pos = line.find('=');
+			size_t pos = line.find('=');
 			if (pos == std::string::npos) return false;
 			std::string tmpKey = line.substr(0, pos);
 			if (key == tmpKey)

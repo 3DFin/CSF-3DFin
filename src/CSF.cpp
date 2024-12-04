@@ -82,7 +82,7 @@ Cloth CSF::do_cloth()
 
     std::cout << "Simulating..." << std::endl;
 
-    for (int i = 0; i < params.interations; i++)
+    for (int i = 0; i < params.iterations; i++)
     {
         const double max_diff = cloth.timeStep();
         cloth.terrCollision();
@@ -94,7 +94,7 @@ Cloth CSF::do_cloth()
         }
     }
 
-    if (params.bSloopSmooth)
+    if (params.smooth_slope)
     {
         std::cout << " - post handle..." << std::endl;
         cloth.movableFilter();

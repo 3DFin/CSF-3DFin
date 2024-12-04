@@ -13,7 +13,7 @@ void csf_filtering(double* points
 	, bool isSmooth
 	, double cloth_resolution
 	, double class_threshold
-	, int interations
+	, int iterations
 	, double time_step
 	,int rows
 	,std::vector<int>& groundIndex
@@ -30,13 +30,13 @@ void csf_filtering(double* points
 	csf.setPointCloud(points,rows);
 
 	//±¸×¢£ºÔÚÊµ¼ÊÊ¹ÓÃ¹ý³ÌÖÐ£¬µãÔÆÊý¾ÝÓÉÖ÷³ÌÐòÌá¹©£¬µ÷ÓÃº¯ÊýÎª
-	//csf.setPointCloud(pc);//pcÎªPointCloudÀà
+
 
 	//step 2 ÉèÖÃ²ÎÊý
-	csf.params.bSloopSmooth = isSmooth;
+	csf.params.smooth_slope = isSmooth;
 	csf.params.class_threshold = class_threshold;
 	csf.params.cloth_resolution = cloth_resolution;
-	csf.params.interations = interations;
+	csf.params.iterations = iterations;
 	csf.params.rigidness = rigidness ;
 	csf.params.time_step = time_step;
 
@@ -53,13 +53,13 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	bool isSmooth =  mxIsLogicalScalarTrue(prhs[2]);
 	int rigidness = (int)mxGetScalar(prhs[1]);
 	double class_threshold = mxGetScalar(prhs[4]);
-	int interations = (int) mxGetScalar(prhs[5]);
+	int iterations = (int) mxGetScalar(prhs[5]);
 	double time_step = mxGetScalar(prhs[6]);
 
 	int rows = mxGetM(prhs[0]);
 	std::vector<int> groundIndex,nongroundIndex;
 	int groundRows,nongroundRows;
-	csf_filtering(points,rigidness,isSmooth,resolution,class_threshold,interations,time_step,
+	csf_filtering(points,rigidness,isSmooth,resolution,class_threshold,iterations,time_step,
 		rows,groundIndex, nongroundIndex,groundRows,nongroundRows);
 	plhs[0] = mxCreateNumericMatrix(groundRows,1, mxINT32_CLASS, mxREAL);
 	plhs[1] = mxCreateNumericMatrix(nongroundRows,1, mxINT32_CLASS, mxREAL);

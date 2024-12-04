@@ -39,12 +39,12 @@ struct Params
 {
     // refer to the website:http://ramm.bnu.edu.cn/projects/CSF/ for the setting
     // of these paramters
-    bool   bSloopSmooth     = true;
+    bool   smooth_slope     = true;
     double time_step        = 0.65;
     double class_threshold  = 0.5;
     double cloth_resolution = 1;
     int    rigidness        = 3;
-    int    interations      = 500;
+    int    iterations      = 500;
 };
 
 #ifdef _CSF_DLL_EXPORT_
