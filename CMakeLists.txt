@@ -4,8 +4,6 @@ project(CSF LANGUAGES CXX)
 option(COMPILE_PYTHON_MODULE "Compile Python module" OFF)
 option(BUILD_DEMO "Build csfdemo executable" OFF)
 
-set(BUILD_SHARED_LIBS "Build as shared library" OFF)
-
 find_package(OpenMP)
 if(OpenMP_CXX_FOUND)
     add_compile_definitions("CSF_USE_OPENMP")
@@ -45,7 +43,7 @@ nanobind_add_module(
   # does nothing on older Python versions
   STABLE_ABI
   NB_STATIC
-  python/CSF_3DFin_ext.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/python/CSF_3DFin_ext.cpp
 )
 
 target_link_libraries(CSF_3DFin_ext PRIVATE CSF)

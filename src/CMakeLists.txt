@@ -21,8 +21,10 @@ set(CSF_HEADERS
     XYZReader.h
 )
 
-add_library(CSF ${CSF_SOURCES} ${CSF_HEADERS})
-target_include_directories(CSF PUBLIC .)
+add_library(CSF STATIC ${CSF_SOURCES} ${CSF_HEADERS})
+target_include_directories(CSF PUBLIC 
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:include/csf>)
 
 set_property(TARGET CSF PROPERTY CXX_STANDARD 17)
 
@@ -31,7 +33,6 @@ if(OpenMP_CXX_FOUND)
 endif()
 
 if(NOT COMPILE_PYTHON_MODULE)
-    install(TARGETS CSF LIBRARY DESTINATION lib)
-    install(TARGETS CSF ARCHIVE DESTINATION lib)
-    install(FILES ${CSF_HEADERS} DESTINATION include)
+    install(TARGETS CSF LIBRARY DESTINATION csf)
+    install(FILES ${CSF_HEADERS} DESTINATION include/csf)
 endif()
