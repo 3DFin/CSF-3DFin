@@ -29,3 +29,8 @@ cmake.args = ["-DCOMPILE_PYTHON_MODULE=ON"]
 
 [tool.cibuildwheel]
 build = "cp3{10,11,12,13}-*"
+archs = ["auto64"] # limit to 64bits builds
+
+# Needed for full C++17 support
+[tool.cibuildwheel.macos.environment]
+MACOSX_DEPLOYMENT_TARGET = "11.0"
