@@ -27,6 +27,7 @@ target_include_directories(CSF PUBLIC
     $<INSTALL_INTERFACE:include/csf>)
 
 set_property(TARGET CSF PROPERTY CXX_STANDARD 17)
+set_property(TARGET CSF PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 if(OpenMP_CXX_FOUND)
     target_link_libraries(CSF PUBLIC OpenMP::OpenMP_CXX)
