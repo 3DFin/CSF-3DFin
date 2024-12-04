@@ -21,38 +21,38 @@
 #include <queue>
 
 // find height by scanning the nearest particles in the same row and column
-double Rasterization::findHeightValByScanline(Particle* p, Cloth& cloth)
+double Rasterization::findHeightValByScanline(Particle& p, Cloth& cloth)
 {
-    int xpos = p->pos_x;
-    int ypos = p->pos_y;
+    int xpos = p.pos_x;
+    int ypos = p.pos_y;
     int cloth_width, cloth_height;
     
     std::tie(cloth_width, cloth_height) = cloth.getGridSize();
 
     for (int i = xpos + 1; i < cloth_width; i++)
     {
-        const double crresHeight = cloth.getParticle(i, ypos)->nearest_point_height;
+        const double crresHeight = cloth.getParticle(i, ypos).nearest_point_height;
 
         if (crresHeight > MIN_INF) return crresHeight;
     }
 
     for (int i = xpos - 1; i >= 0; i--)
     {
-        const double crresHeight = cloth.getParticle(i, ypos)->nearest_point_height;
+        const double crresHeight = cloth.getParticle(i, ypos).nearest_point_height;
 
         if (crresHeight > MIN_INF) return crresHeight;
     }
 
     for (int j = ypos - 1; j >= 0; j--)
     {
-        const double crresHeight = cloth.getParticle(xpos, j)->nearest_point_height;
+        const double crresHeight = cloth.getParticle(xpos, j).nearest_point_height;
 
         if (crresHeight > MIN_INF) return crresHeight;
     }
 
     for (int j = ypos + 1; j < cloth_height; j++)
     {
-        const double crresHeight = cloth.getParticle(xpos, j)->nearest_point_height;
+        const double crresHeight = cloth.getParticle(xpos, j).nearest_point_height;
 
         if (crresHeight > MIN_INF) return crresHeight;
     }
@@ -61,7 +61,7 @@ double Rasterization::findHeightValByScanline(Particle* p, Cloth& cloth)
 }
 
 // find height by Region growing around the current particle
-double Rasterization::findHeightValByNeighbor(Particle* p)
+double Rasterization::findHeightValByNeighbor(Particle& p)
 {
     std::queue<Particle*>  nqueue;
     std::vector<Particle*> pbacklist;
@@ -73,9 +73,9 @@ double Rasterization::findHeightValByNeighbor(Particle* p)
     // particle_number-1 and particle_number-2
 
     // initialize the queue with the neighbors of the current particle
-    for (auto neighbor : p->neighborsList)
+    for (auto neighbor : p.neighborsList)
     {
-        p->is_visited = true;
+        p.is_visited = true;
         nqueue.push(neighbor);
     }
 
@@ -130,15 +130,15 @@ void Rasterization::Rasterize(Cloth& cloth, const csf::PointCloud& pc, std::vect
 
         if ((col >= 0) && (row >= 0))
         {
-            Particle*    particle = cloth.getParticle(col, row);
+            Particle&    particle = cloth.getParticle(col, row);
             
             const double point_to_particle_dist =
-                square_dist(point.x, point.z, particle->initial_pos.f[0], particle->initial_pos.f[2]);
+                square_dist(point.x, point.z, particle.initial_pos.f[0], particle.initial_pos.f[2]);
 
-            if (point_to_particle_dist < particle->tmp_dist)
+            if (point_to_particle_dist < particle.tmp_dist)
             {
-                particle->tmp_dist             = point_to_particle_dist;
-                particle->nearest_point_height = point.y;
+                particle.tmp_dist             = point_to_particle_dist;
+                particle.nearest_point_height = point.y;
             }
         }
     }
@@ -146,8 +146,8 @@ void Rasterization::Rasterize(Cloth& cloth, const csf::PointCloud& pc, std::vect
     heightVal.resize(cloth.getSize());
     for (int i = 0; i < cloth.getSize(); i++)
     {
-        Particle*    pcur           = cloth.getParticle(i);
-        const double nearest_height = pcur->nearest_point_height;
+        Particle&    pcur           = cloth.getParticle(i);
+        const double nearest_height = pcur.nearest_point_height;
 
         if (nearest_height > MIN_INF) { heightVal[i] = nearest_height; }
         else

@@ -34,7 +34,7 @@ void CSF::setPointCloud(const double* points, const int rows)
     for (int i = 0; i < rows; i++) { point_cloud[i] = {Mat(i, 0), -Mat(i, 2), Mat(i, 1)}; }
 }
 
-void CSF::setPointCloud(csf::PointCloud& pc)
+void CSF::setPointCloud(const csf::PointCloud& pc)
 {
     int pointCount = static_cast<int>(pc.size());
     point_cloud    = pc;

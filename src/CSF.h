@@ -70,21 +70,21 @@ class CSF
     // numpy
     void setPointCloud(const double* points, const int rows);
 
+    // PointCloud set pointcloud
+    void setPointCloud(const csf::PointCloud& pc);
+
     // read pointcloud from txt file: (X Y Z) for each line
     void readPointsFromFile(const std::string& filename);
 
-    inline csf::PointCloud& getPointCloud() { return point_cloud; }
+    csf::PointCloud& getPointCloud() { return point_cloud; }
 
-    inline const csf::PointCloud& getPointCloud() const { return point_cloud; }
+    const csf::PointCloud& getPointCloud() const { return point_cloud; }
 
     // save points to file
     void savePoints(const std::vector<int>& grp, const std::string& path) const;
 
     // get size of pointcloud
-    size_t size() { return point_cloud.size(); }
-
-    // PointCloud set pointcloud
-    void setPointCloud(csf::PointCloud& pc);
+    size_t size() const { return point_cloud.size(); }
 
     // The results are index of ground points in the original
     // pointcloud and write the cloth particles coordinates

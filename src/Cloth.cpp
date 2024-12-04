@@ -58,15 +58,15 @@ Cloth::Cloth(
     {
         for (int y = 0; y < num_particles_height; y++)
         {
-            if (x < num_particles_width - 1) makeConstraint(getParticle(x, y), getParticle(x + 1, y));
+            if (x < num_particles_width - 1) makeConstraint(&getParticle(x, y), &getParticle(x + 1, y));
 
-            if (y < num_particles_height - 1) makeConstraint(getParticle(x, y), getParticle(x, y + 1));
-
-            if ((x < num_particles_width - 1) && (y < num_particles_height - 1))
-                makeConstraint(getParticle(x, y), getParticle(x + 1, y + 1));
+            if (y < num_particles_height - 1) makeConstraint(&getParticle(x, y), &getParticle(x, y + 1));
 
             if ((x < num_particles_width - 1) && (y < num_particles_height - 1))
-                makeConstraint(getParticle(x + 1, y), getParticle(x, y + 1));
+                makeConstraint(&getParticle(x, y), &getParticle(x + 1, y + 1));
+
+            if ((x < num_particles_width - 1) && (y < num_particles_height - 1))
+                makeConstraint(&getParticle(x + 1, y), &getParticle(x, y + 1));
         }
     }
 
@@ -76,15 +76,15 @@ Cloth::Cloth(
     {
         for (int y = 0; y < num_particles_height; y++)
         {
-            if (x < num_particles_width - 2) makeConstraint(getParticle(x, y), getParticle(x + 2, y));
+            if (x < num_particles_width - 2) makeConstraint(&getParticle(x, y), &getParticle(x + 2, y));
 
-            if (y < num_particles_height - 2) makeConstraint(getParticle(x, y), getParticle(x, y + 2));
-
-            if ((x < num_particles_width - 2) && (y < num_particles_height - 2))
-                makeConstraint(getParticle(x, y), getParticle(x + 2, y + 2));
+            if (y < num_particles_height - 2) makeConstraint(&getParticle(x, y), &getParticle(x, y + 2));
 
             if ((x < num_particles_width - 2) && (y < num_particles_height - 2))
-                makeConstraint(getParticle(x + 2, y), getParticle(x, y + 2));
+                makeConstraint(&getParticle(x, y), &getParticle(x + 2, y + 2));
+
+            if ((x < num_particles_width - 2) && (y < num_particles_height - 2))
+                makeConstraint(&getParticle(x + 2, y), &getParticle(x, y + 2));
         }
     }
 }
@@ -136,9 +136,9 @@ void Cloth::movableFilter()
     {
         for (int y = 0; y < num_particles_height; y++)
         {
-            Particle* ptc = getParticle(x, y);
+            Particle& ptc = getParticle(x, y);
 
-            if (ptc->isMovable() && !ptc->is_visited)
+            if (ptc.isMovable() && !ptc.is_visited)
             {
                 std::queue<int>               queue;
                 std::vector<XY>               connected;  // store the connected component
@@ -163,73 +163,73 @@ void Cloth::movableFilter()
 
                     if (cur_x > 0)
                     {
-                        Particle* ptc_left = getParticle(cur_x - 1, cur_y);
+                        Particle& ptc_left = getParticle(cur_x - 1, cur_y);
 
-                        if (ptc_left->isMovable())
+                        if (ptc_left.isMovable())
                         {
-                            if (!ptc_left->is_visited)
+                            if (!ptc_left.is_visited)
                             {
-                                ptc_left->is_visited = true;
+                                ptc_left.is_visited = true;
                                 connected.emplace_back(cur_x - 1, cur_y);
                                 queue.push(num_particles_width * cur_y + cur_x - 1);
                                 neighbor.push_back(sum);
-                                ptc_left->c_pos = sum++;
+                                ptc_left.c_pos = sum++;
                             }
-                            else { neighbor.push_back(ptc_left->c_pos); }
+                            else { neighbor.push_back(ptc_left.c_pos); }
                         }
                     }
 
                     if (cur_x < num_particles_width - 1)
                     {
-                        Particle* ptc_right = getParticle(cur_x + 1, cur_y);
+                        Particle& ptc_right = getParticle(cur_x + 1, cur_y);
 
-                        if (ptc_right->isMovable())
+                        if (ptc_right.isMovable())
                         {
-                            if (!ptc_right->is_visited)
+                            if (!ptc_right.is_visited)
                             {
-                                ptc_right->is_visited = true;
+                                ptc_right.is_visited = true;
                                 connected.emplace_back(cur_x + 1, cur_y);
                                 queue.push(num_particles_width * cur_y + cur_x + 1);
                                 neighbor.push_back(sum);
-                                ptc_right->c_pos = sum++;
+                                ptc_right.c_pos = sum++;
                             }
-                            else { neighbor.push_back(ptc_right->c_pos); }
+                            else { neighbor.push_back(ptc_right.c_pos); }
                         }
                     }
 
                     if (cur_y > 0)
                     {
-                        Particle* ptc_bottom = getParticle(cur_x, cur_y - 1);
+                        Particle& ptc_bottom = getParticle(cur_x, cur_y - 1);
 
-                        if (ptc_bottom->isMovable())
+                        if (ptc_bottom.isMovable())
                         {
-                            if (!ptc_bottom->is_visited)
+                            if (!ptc_bottom.is_visited)
                             {
-                                ptc_bottom->is_visited = true;
+                                ptc_bottom.is_visited = true;
                                 connected.emplace_back(cur_x, cur_y - 1);
                                 queue.push(num_particles_width * (cur_y - 1) + cur_x);
                                 neighbor.push_back(sum);
-                                ptc_bottom->c_pos = sum++;
+                                ptc_bottom.c_pos = sum++;
                             }
-                            else { neighbor.push_back(ptc_bottom->c_pos); }
+                            else { neighbor.push_back(ptc_bottom.c_pos); }
                         }
                     }
 
                     if (cur_y < num_particles_height - 1)
                     {
-                        Particle* ptc_top = getParticle(cur_x, cur_y + 1);
+                        Particle& ptc_top = getParticle(cur_x, cur_y + 1);
 
-                        if (ptc_top->isMovable())
+                        if (ptc_top.isMovable())
                         {
-                            if (!ptc_top->is_visited)
+                            if (!ptc_top.is_visited)
                             {
-                                ptc_top->is_visited = true;
+                                ptc_top.is_visited = true;
                                 connected.emplace_back(cur_x, cur_y + 1);
                                 queue.push(num_particles_width * (cur_y + 1) + cur_x);
                                 neighbor.push_back(sum);
-                                ptc_top->c_pos = sum++;
+                                ptc_top.c_pos = sum++;
                             }
-                            else { neighbor.push_back(ptc_top->c_pos); }
+                            else { neighbor.push_back(ptc_top.c_pos); }
                         }
                     }
                     neighbors.push_back(neighbor);
@@ -254,21 +254,21 @@ std::vector<int> Cloth::findUnmovablePoint(const std::vector<XY>& connected)
         int       x     = connected[i].x;
         int       y     = connected[i].y;
         int       index = y * num_particles_width + x;
-        Particle* ptc   = getParticle(x, y);
+        Particle& ptc   = getParticle(x, y);
 
         if (x > 0)
         {
-            Particle* ptc_x = getParticle(x - 1, y);
+            Particle& ptc_x = getParticle(x - 1, y);
 
-            if (!ptc_x->isMovable())
+            if (!ptc_x.isMovable())
             {
                 int index_ref = y * num_particles_width + x - 1;
 
                 if ((fabs(height_values[index] - height_values[index_ref]) < smoothThreshold) &&
-                    (ptc->height - height_values[index] < heightThreshold))
+                    (ptc.height - height_values[index] < heightThreshold))
                 {
-                    particles[index].offsetPos(height_values[index] - ptc->height);
-                    ptc->makeUnmovable();
+                    particles[index].offsetPos(height_values[index] - ptc.height);
+                    ptc.makeUnmovable();
                     edgePoints.push_back(i);
                     continue;
                 }
@@ -277,17 +277,17 @@ std::vector<int> Cloth::findUnmovablePoint(const std::vector<XY>& connected)
 
         if (x < num_particles_width - 1)
         {
-            Particle* ptc_x = getParticle(x + 1, y);
+            Particle& ptc_x = getParticle(x + 1, y);
 
-            if (!ptc_x->isMovable())
+            if (!ptc_x.isMovable())
             {
                 int index_ref = y * num_particles_width + x + 1;
 
                 if ((fabs(height_values[index] - height_values[index_ref]) < smoothThreshold) &&
-                    (ptc->height - height_values[index] < heightThreshold))
+                    (ptc.height - height_values[index] < heightThreshold))
                 {
-                    particles[index].offsetPos(height_values[index] - ptc->height);
-                    ptc->makeUnmovable();
+                    particles[index].offsetPos(height_values[index] - ptc.height);
+                    ptc.makeUnmovable();
                     edgePoints.push_back(i);
                     continue;
                 }
@@ -296,17 +296,17 @@ std::vector<int> Cloth::findUnmovablePoint(const std::vector<XY>& connected)
 
         if (y > 0)
         {
-            Particle* ptc_y = getParticle(x, y - 1);
+            Particle& ptc_y = getParticle(x, y - 1);
 
-            if (!ptc_y->isMovable())
+            if (!ptc_y.isMovable())
             {
                 int index_ref = (y - 1) * num_particles_width + x;
 
                 if ((fabs(height_values[index] - height_values[index_ref]) < smoothThreshold) &&
-                    (ptc->height - height_values[index] < heightThreshold))
+                    (ptc.height - height_values[index] < heightThreshold))
                 {
-                    particles[index].offsetPos(height_values[index] - ptc->height);
-                    ptc->makeUnmovable();
+                    particles[index].offsetPos(height_values[index] - ptc.height);
+                    ptc.makeUnmovable();
                     edgePoints.push_back(i);
                     continue;
                 }
@@ -315,17 +315,17 @@ std::vector<int> Cloth::findUnmovablePoint(const std::vector<XY>& connected)
 
         if (y < num_particles_height - 1)
         {
-            Particle* ptc_y = getParticle(x, y + 1);
+            Particle& ptc_y = getParticle(x, y + 1);
 
-            if (!ptc_y->isMovable())
+            if (!ptc_y.isMovable())
             {
                 int index_ref = (y + 1) * num_particles_width + x;
 
                 if ((fabs(height_values[index] - height_values[index_ref]) < smoothThreshold) &&
-                    (ptc->height - height_values[index] < heightThreshold))
+                    (ptc.height - height_values[index] < heightThreshold))
                 {
-                    particles[index].offsetPos(height_values[index] - ptc->height);
-                    ptc->makeUnmovable();
+                    particles[index].offsetPos(height_values[index] - ptc.height);
+                    ptc.makeUnmovable();
                     edgePoints.push_back(i);
                     continue;
                 }

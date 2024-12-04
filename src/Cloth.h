@@ -103,9 +103,11 @@ public:
 
     void saveMovableToFile(std::string path = "");
 
-    Particle* getParticle(int x, int y) { return &particles[y * num_particles_width + x]; }
+    Particle& getParticle(int x, int y) { return particles[y * num_particles_width + x]; }
 
-    Particle* getParticle(int index) { return &particles[index]; }
+    Particle& getParticle(int index) { return particles[index]; }
+   
+    const std::vector<Particle>& getParticles() const { return particles; }
 
     void makeConstraint(Particle* p1, Particle* p2)
     {
@@ -113,13 +115,12 @@ public:
         p2->neighborsList.push_back(p1);
     }
 
-    int getSize() { return num_particles_width * num_particles_height; }
+    int getSize() const { return num_particles_width * num_particles_height; }
 
     std::pair<int, int> getGridSize(){return std::make_pair(num_particles_width, num_particles_height);}
 
-    inline std::vector<double>& getHeightvals() { return height_values; }
+    std::vector<double>& getHeightvals() { return height_values; }
 
-    const std::vector<Particle>& getParticles() { return particles; }
 
    public:
     Vec3                origin_pos;
