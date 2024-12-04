@@ -71,49 +71,14 @@ struct XY
 
 class Cloth
 {
-   private:
-    // post processing is only for connected component which is large than 50
-
-    static constexpr int max_particle_for_post_processing = 50;
-    int                  constraint_iterations;
-    int                  rigidness;
-    double               time_step;
-
-    std::vector<Particle> particles;  // all particles that are part of this cloth
-
-    double smoothThreshold;
-    double heightThreshold;
-
-   public:
-    Vec3                origin_pos;
-    double              step_x, step_y;
-    std::vector<double> height_values;  // height values
-    int                 num_particles_width;  // number of particles in width direction
-    int                 num_particles_height;  // number of particles in height direction
-
-    Particle* getParticle(int x, int y) { return &particles[y * num_particles_width + x]; }
-
-    void makeConstraint(Particle* p1, Particle* p2)
-    {
-        p1->neighborsList.push_back(p2);
-        p2->neighborsList.push_back(p1);
-    }
-
-   public:
-    int getSize() { return num_particles_width * num_particles_height; }
-
-    inline std::vector<double>& getHeightvals() { return height_values; }
-
-    const std::vector<Particle>& getParticles() { return particles; }
-
-    Particle* getParticle1d(int index) { return &particles[index]; }
-
-   public:
+public:
     /* This is a important constructor for the entire system of
      * particles and constraints */
     Cloth(
         const Vec3& origin_pos, int num_particles_width, int num_particles_height, double step_x, double step_y,
         double smoothThreshold, double heightThreshold, int rigidness, double time_step);
+
+    ~Cloth() = default;
 
     /* this is an important methods where the time is progressed one
      * time step for the entire cloth.  This includes calling
@@ -137,4 +102,39 @@ class Cloth
     std::vector<double> toVector();
 
     void saveMovableToFile(std::string path = "");
+
+    Particle* getParticle(int x, int y) { return &particles[y * num_particles_width + x]; }
+
+    Particle* getParticle(int index) { return &particles[index]; }
+
+    void makeConstraint(Particle* p1, Particle* p2)
+    {
+        p1->neighborsList.push_back(p2);
+        p2->neighborsList.push_back(p1);
+    }
+
+    int getSize() { return num_particles_width * num_particles_height; }
+
+    inline std::vector<double>& getHeightvals() { return height_values; }
+
+    const std::vector<Particle>& getParticles() { return particles; }
+
+   public:
+    Vec3                origin_pos;
+    double              step_x, step_y;
+    std::vector<double> height_values;  // height values
+    int                 num_particles_width;  // number of particles in width direction
+    int                 num_particles_height;  // number of particles in height direction
+
+   private:
+    // post processing is only for connected component which is large than 50
+    static constexpr int max_particle_for_post_processing = 50;
+    int                  constraint_iterations;
+    int                  rigidness;
+    double               time_step;
+
+    std::vector<Particle> particles;  // all particles that are part of this cloth
+
+    double smoothThreshold;
+    double heightThreshold;
 };

@@ -404,7 +404,7 @@ void Cloth::saveToFile(std::string path)
 
     if (!f1) return;
 
-    for (std::size_t i = 0; i < particles.size(); i++)
+    for (size_t i = 0; i < particles.size(); i++)
     {
         f1 << std::fixed << std::setprecision(8) << particles[i].initial_pos.f[0] << "	"
            << particles[i].initial_pos.f[2] << "	" << -particles[i].height << std::endl;
@@ -424,7 +424,7 @@ void Cloth::saveMovableToFile(std::string path)
 
     if (!f1) return;
 
-    for (std::size_t i = 0; i < particles.size(); i++)
+    for (size_t i = 0; i < particles.size(); i++)
     {
         if (particles[i].isMovable())
         {
