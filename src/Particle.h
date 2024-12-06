@@ -73,7 +73,7 @@ class Particle
 
     ~Particle() = default;
 
-    bool isMovable() { return movable; }
+    bool isMovable() const { return movable; }
 
     /* This is one of the important methods, where the time is
      * progressed a single step size (TIME_STEPSIZE) The method is
@@ -87,12 +87,12 @@ class Particle
 
     void makeUnmovable() { movable = false; }
 
-    void printself(std::string s = "")
+    void printself(std::string s = "") const
     {
         std::cout << s << ": " << initial_pos.f[0] << " movable:  " << this->movable << std::endl;
     }
 
-    void satisfyConstraintSelf(int constraintTimes);
+    void satisfyConstraintSelf(int constraint_times);
 
    public:
     // These two memebers are used in the process of edge smoothing after

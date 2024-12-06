@@ -18,7 +18,7 @@
 
 #include "point_cloud.h"
 
-void csf::PointCloud::computeBoundingBox(Point& bbMin, Point& bbMax)
+void csf::PointCloud::computeBoundingBox(Point& bbMin, Point& bbMax) const
 {
     if (empty())
     {

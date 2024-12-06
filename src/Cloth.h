@@ -103,6 +103,8 @@ public:
 
     Particle& getParticle(int x, int y) { return particles[y * num_particles_width + x]; }
 
+    const Particle& getParticle(int x, int y) const { return particles[y * num_particles_width + x]; }
+
     Particle& getParticle(int index) { return particles[index]; }
    
     const std::vector<Particle>& getParticles() const { return particles; }

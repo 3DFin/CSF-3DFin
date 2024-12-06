@@ -53,7 +53,7 @@ struct Point
 class PointCloud : public std::vector<Point>
 {
    public:
-    void computeBoundingBox(Point& bbMin, Point& bbMax);
+    void computeBoundingBox(Point& bbMin, Point& bbMax) const;
 };
 
 }  // namespace csf

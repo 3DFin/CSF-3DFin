@@ -32,7 +32,7 @@ void Particle::timeStep()
     }
 }
 
-void Particle::satisfyConstraintSelf(int constraintTimes)
+void Particle::satisfyConstraintSelf(int constraint_times)
 {
     Particle* p1 = this;
 
@@ -45,20 +45,20 @@ void Particle::satisfyConstraintSelf(int constraintTimes)
         {
             // Lets make it half that length, so that we can move BOTH p1 and p2.
             const double correction_factor_half =
-                correction_factor * (constraintTimes > 14 ? 0.5 : doubleMove1[constraintTimes]);
+                correction_factor * (constraint_times > 14 ? 0.5 : doubleMove1[constraint_times]);
             p1->offsetPos(correction_factor_half);
             p2->offsetPos(-correction_factor_half);
         }
         else if (p1->isMovable() && !p2->isMovable())
         {
             const double correction_factor_half =
-                correction_factor * (constraintTimes > 14 ? 1 : singleMove1[constraintTimes]);
+                correction_factor * (constraint_times > 14 ? 1 : singleMove1[constraint_times]);
             p1->offsetPos(correction_factor_half);
         }
         else if (!p1->isMovable() && p2->isMovable())
         {
             const double correction_factor_half =
-                correction_factor * (constraintTimes > 14 ? 1 : singleMove1[constraintTimes]);
+                correction_factor * (constraint_times > 14 ? 1 : singleMove1[constraint_times]);
             p2->offsetPos(-correction_factor_half);
         }
     }
