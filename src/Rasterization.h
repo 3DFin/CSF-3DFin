@@ -30,7 +30,7 @@ class Rasterization
     // for a cloth particle, if no corresponding lidar point are found.
     // the heightval are set as its neighbor's
     double static findHeightValByNeighbor(Particle& p);
-    double static findHeightValByScanline(Particle& p, Cloth& cloth);
+    double static findHeightValByScanline(Particle& p, const Cloth& cloth);
 
     void static Rasterize(Cloth& cloth, const csf::PointCloud& pc, std::vector<double>& heightVal);
 

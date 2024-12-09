@@ -35,18 +35,6 @@
 #include "Cloth.h"
 #include "point_cloud.h"
 
-struct Params
-{
-    // refer to the website:http://ramm.bnu.edu.cn/projects/CSF/ for the setting
-    // of these paramters
-    bool   smooth_slope     = true;
-    double time_step        = 0.65;
-    double class_threshold  = 0.5;
-    double cloth_resolution = 1;
-    int    rigidness        = 3;
-    int    iterations      = 500;
-};
-
 #ifdef _CSF_DLL_EXPORT_
 #ifdef DLL_IMPLEMENT
 #define DLL_API __declspec(dllexport)
@@ -54,6 +42,19 @@ struct Params
 #define DLL_API __declspec(dllimport)
 #endif  // ifdef DLL_IMPLEMENT
 #endif  // ifdef _CSF_DLL_EXPORT_
+
+struct Params
+{
+    // refer to the website:http://ramm.bnu.edu.cn/projects/CSF/ for the setting
+    // of these paramters
+    bool   smooth_slope     = true;
+    double time_step        = 0.65;
+    double class_threshold  = 0.5;
+    double cloth_resolution = 1.0;
+    int    rigidness        = 3;
+    int    iterations      = 500;
+};
+
 
 #ifdef _CSF_DLL_EXPORT_
 class DLL_API CSF

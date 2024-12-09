@@ -34,32 +34,32 @@ void Particle::timeStep()
 
 void Particle::satisfyConstraintSelf(int constraint_times)
 {
-    Particle* p1 = this;
+    Particle* current_particle = this;
 
     for (size_t i = 0; i < neighborsList.size(); i++)
     {
-        Particle*    p2                = neighborsList[i];
-        const double correction_factor = p2->height - p1->height;
+        Particle*    neighbor_particle = neighborsList[i];
+        const double correction_factor = neighbor_particle->height - current_particle->height;
 
-        if (p1->isMovable() && p2->isMovable())
+        if (current_particle->isMovable() && neighbor_particle->isMovable())
         {
             // Lets make it half that length, so that we can move BOTH p1 and p2.
             const double correction_factor_half =
                 correction_factor * (constraint_times > 14 ? 0.5 : doubleMove1[constraint_times]);
-            p1->offsetPos(correction_factor_half);
-            p2->offsetPos(-correction_factor_half);
+            current_particle->offsetPos(correction_factor_half);
+            neighbor_particle->offsetPos(-correction_factor_half);
         }
-        else if (p1->isMovable() && !p2->isMovable())
+        else if (current_particle->isMovable() && !neighbor_particle->isMovable())
         {
             const double correction_factor_half =
                 correction_factor * (constraint_times > 14 ? 1 : singleMove1[constraint_times]);
-            p1->offsetPos(correction_factor_half);
+            current_particle->offsetPos(correction_factor_half);
         }
-        else if (!p1->isMovable() && p2->isMovable())
+        else if (!current_particle->isMovable() && neighbor_particle->isMovable())
         {
             const double correction_factor_half =
                 correction_factor * (constraint_times > 14 ? 1 : singleMove1[constraint_times]);
-            p2->offsetPos(-correction_factor_half);
+            neighbor_particle->offsetPos(-correction_factor_half);
         }
     }
 }

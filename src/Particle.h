@@ -75,17 +75,26 @@ class Particle
 
     bool isMovable() const { return movable; }
 
+    void makeUnmovable() { movable = false; }
+
+    // particle height should be encoded in nearest_point_height
+    // reset the height of a particle to a specified value
+    // and flag it as unmovable
+    void makeUnmovable(const double reset_value)
+    {
+        height  = reset_value;
+        movable = false;
+    }
+
     /* This is one of the important methods, where the time is
      * progressed a single step size (TIME_STEPSIZE) The method is
      * called by Cloth.time_step()*/
     void timeStep();
 
-    void offsetPos(double offset)
+    void offsetPos(const double offset)
     {
         if (movable) height += offset;
     }
-
-    void makeUnmovable() { movable = false; }
 
     void printself(std::string s = "") const
     {
@@ -95,12 +104,12 @@ class Particle
     void satisfyConstraintSelf(int constraint_times);
 
    public:
-    // These two memebers are used in the process of edge smoothing after
+    // These two members are used in the process of edge smoothing after
     // the cloth simulation step.
 
     // The initial position of the particle in the cloth
     // this is basically only use at export time and it could
-    // simply be genrated on the fly given the particle position
+    // simply be generated on the fly given the particle position
     // on the grid
     const Vec3 initial_pos;
 

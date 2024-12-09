@@ -33,7 +33,7 @@ Cloth::Cloth(
       num_particles_height(_num_particles_height)
 {
     constexpr double gravity      = 0.2;  // TODO: make it a parameter
-    double           time_step2   = time_step * time_step;
+    const double     time_step2   = time_step * time_step;
     const double     displacement = -gravity * time_step2;
 
     // We are essentially using this vector as an array with room for
@@ -97,17 +97,14 @@ double Cloth::timeStep()
 #endif
     for (int i = 0; i < particleCount; i++) { particles[i].timeStep(); }
 
-    for (int j = 0; j < particleCount; j++) { particles[j].satisfyConstraintSelf(constraint_iterations); }
+    std::for_each(
+        std::begin(particles), std::end(particles),
+        [&](Particle& particle) { particle.satisfyConstraintSelf(constraint_iterations); });
 
     double max_diff = 0;
-    for (int i = 0; i < particleCount; i++)
-    {
-        if (particles[i].isMovable())
-        {
-            max_diff = std::max(max_diff, fabs(particles[i].previous_height - particles[i].height));
-        }
-    }
-
+    std::for_each(
+        std::begin(particles), std::end(particles), [&](const Particle& particle)
+        { max_diff = std::max(max_diff, std::fabs(particle.previous_height - particle.height)); });
     return max_diff;
 }
 
@@ -120,12 +117,18 @@ void Cloth::terrCollision()
 #endif
     for (int i = 0; i < particleCount; i++)
     {
-        const double displacement = particles[i].height;
-
-        if (displacement < height_values[i])
+        Particle& curr_particle = particles[i];
+        
+        if(!curr_particle.isMovable())
+            continue;
+        
+        // if the particle height is inferior to the height value
+        // defined by the rasterization it's considered to have crossed
+        // the surface. the particle is made unmovable its height is forced
+        // the value computed by the rasterization
+        if (curr_particle.height < height_values[i])
         {
-            particles[i].offsetPos(height_values[i] - displacement);
-            particles[i].makeUnmovable();
+            curr_particle.makeUnmovable(height_values[i]);
         }
     }
 }
@@ -136,15 +139,15 @@ void Cloth::movableFilter()
     {
         for (int y = 0; y < num_particles_height; y++)
         {
-            Particle& ptc = getParticle(x, y);
+            const Particle& ptc = getParticle(x, y);
 
             if (ptc.isMovable() && !ptc.is_visited)
             {
+                const int                     index = y * num_particles_width + x;
                 std::queue<int>               queue;
                 std::vector<XY>               connected;  // store the connected component
                 std::vector<std::vector<int>> neighbors;
-                int                           sum   = 1;
-                int                           index = y * num_particles_width + x;
+                int                           sum = 1;
 
                 // visit the init node
                 connected.emplace_back(x, y);
@@ -157,8 +160,8 @@ void Cloth::movableFilter()
                 {
                     const Particle& ptc_f = particles[queue.front()];
                     queue.pop();
-                    int              cur_x = ptc_f.pos_x;
-                    int              cur_y = ptc_f.pos_y;
+                    const int              cur_x = ptc_f.pos_x;
+                    const int              cur_y = ptc_f.pos_y;
                     std::vector<int> neighbor;
 
                     if (cur_x > 0)
@@ -237,7 +240,7 @@ void Cloth::movableFilter()
 
                 if (sum > max_particle_for_post_processing)
                 {
-                    std::vector<int> edgePoints = findUnmovablePoint(connected);
+                    const std::vector<int> edgePoints = findUnmovablePoint(connected);
                     handle_slop_connected(edgePoints, connected, neighbors);
                 }
             }
@@ -251,10 +254,16 @@ std::vector<int> Cloth::findUnmovablePoint(const std::vector<XY>& connected)
 
     for (size_t i = 0; i < connected.size(); i++)
     {
-        int       x     = connected[i].x;
-        int       y     = connected[i].y;
-        int       index = y * num_particles_width + x;
+        const int x     = connected[i].x;
+        const int y     = connected[i].y;
+        const int index = y * num_particles_width + x;
         Particle& ptc   = getParticle(x, y);
+        
+        //TODO RJ: this was pulled off the if(std::fabs(...)) test
+        // of each neighbor test. Verify if the test is correct in the paper
+        // maybe it's nn.heigh - height_values[index]
+        if (ptc.height - height_values[index] < heightThreshold)
+            continue;
 
         if (x > 0)
         {
@@ -262,12 +271,11 @@ std::vector<int> Cloth::findUnmovablePoint(const std::vector<XY>& connected)
 
             if (!ptc_x.isMovable())
             {
-                int index_ref = y * num_particles_width + x - 1;
+                const int index_ref = y * num_particles_width + x - 1;
 
-                if ((fabs(height_values[index] - height_values[index_ref]) < smoothThreshold) &&
-                    (ptc.height - height_values[index] < heightThreshold))
+                if (std::fabs(height_values[index] - height_values[index_ref]) < smoothThreshold)
                 {
-                    particles[index].offsetPos(height_values[index] - ptc.height);
+                    ptc_x.offsetPos(height_values[index] - ptc.height);
                     ptc.makeUnmovable();
                     edgePoints.push_back(i);
                     continue;
@@ -281,12 +289,11 @@ std::vector<int> Cloth::findUnmovablePoint(const std::vector<XY>& connected)
 
             if (!ptc_x.isMovable())
             {
-                int index_ref = y * num_particles_width + x + 1;
+                const int index_ref = y * num_particles_width + x + 1;
 
-                if ((fabs(height_values[index] - height_values[index_ref]) < smoothThreshold) &&
-                    (ptc.height - height_values[index] < heightThreshold))
+                if (std::fabs(height_values[index] - height_values[index_ref]) < smoothThreshold)
                 {
-                    particles[index].offsetPos(height_values[index] - ptc.height);
+                    ptc_x.offsetPos(height_values[index] - ptc.height);
                     ptc.makeUnmovable();
                     edgePoints.push_back(i);
                     continue;
@@ -300,12 +307,11 @@ std::vector<int> Cloth::findUnmovablePoint(const std::vector<XY>& connected)
 
             if (!ptc_y.isMovable())
             {
-                int index_ref = (y - 1) * num_particles_width + x;
+                const int index_ref = (y - 1) * num_particles_width + x;
 
-                if ((fabs(height_values[index] - height_values[index_ref]) < smoothThreshold) &&
-                    (ptc.height - height_values[index] < heightThreshold))
+                if (std::fabs(height_values[index] - height_values[index_ref]) < smoothThreshold)
                 {
-                    particles[index].offsetPos(height_values[index] - ptc.height);
+                    ptc_y.offsetPos(height_values[index] - ptc.height);
                     ptc.makeUnmovable();
                     edgePoints.push_back(i);
                     continue;
@@ -319,12 +325,11 @@ std::vector<int> Cloth::findUnmovablePoint(const std::vector<XY>& connected)
 
             if (!ptc_y.isMovable())
             {
-                int index_ref = (y + 1) * num_particles_width + x;
+                const int index_ref = (y + 1) * num_particles_width + x;
 
-                if ((fabs(height_values[index] - height_values[index_ref]) < smoothThreshold) &&
-                    (ptc.height - height_values[index] < heightThreshold))
+                if (std::fabs(height_values[index] - height_values[index_ref]) < smoothThreshold)
                 {
-                    particles[index].offsetPos(height_values[index] - ptc.height);
+                    ptc_y.offsetPos(height_values[index] - ptc.height);
                     ptc.makeUnmovable();
                     edgePoints.push_back(i);
                     continue;
@@ -341,15 +346,9 @@ void Cloth::handle_slop_connected(
     const std::vector<std::vector<int>>& neighbors)
 {
     std::vector<bool> visited(connected.size(), false);
-    
+    std::queue<int>   queue;
 
-    std::queue<int> queue;
-
-    for (size_t i = 0; i < edgePoints.size(); i++)
-    {
-        queue.push(edgePoints[i]);
-        visited[edgePoints[i]] = true;
-    }
+    for (size_t i = 0; i < edgePoints.size(); i++) { queue.push(edgePoints[i]); }
 
     while (!queue.empty())
     {
@@ -363,11 +362,13 @@ void Cloth::handle_slop_connected(
             int index_neighbor =
                 connected[neighbors[index][i]].y * num_particles_width + connected[neighbors[index][i]].x;
 
-            if ((fabs(height_values[index_center] - height_values[index_neighbor]) < smoothThreshold) &&
-                (fabs(particles[index_neighbor].height - height_values[index_neighbor]) < heightThreshold))
+            Particle& neighbor_particle = particles[index_neighbor];
+
+            if ((std::fabs(height_values[index_center] - height_values[index_neighbor]) < smoothThreshold) &&
+                (std::fabs(particles[index_neighbor].height - height_values[index_neighbor]) < heightThreshold))
             {
-                particles[index_neighbor].offsetPos(height_values[index_neighbor] - particles[index_neighbor].height);
-                particles[index_neighbor].makeUnmovable();
+                neighbor_particle.offsetPos(height_values[index_neighbor] - particles[index_neighbor].height);
+                neighbor_particle.makeUnmovable();
 
                 if (visited[neighbors[index][i]] == false)
                 {

@@ -21,12 +21,12 @@
 #include <queue>
 
 // find height by scanning the nearest particles in the same row and column
-double Rasterization::findHeightValByScanline(Particle& p, Cloth& cloth)
+double Rasterization::findHeightValByScanline(Particle& p, const Cloth& cloth)
 {
     int xpos = p.pos_x;
     int ypos = p.pos_y;
     int cloth_width, cloth_height;
-    
+
     std::tie(cloth_width, cloth_height) = cloth.getGridSize();
 
     for (int i = xpos + 1; i < cloth_width; i++)
@@ -130,8 +130,8 @@ void Rasterization::Rasterize(Cloth& cloth, const csf::PointCloud& pc, std::vect
 
         if ((col >= 0) && (row >= 0))
         {
-            Particle&    particle = cloth.getParticle(col, row);
-            
+            Particle& particle = cloth.getParticle(col, row);
+
             const double point_to_particle_dist =
                 square_dist(point.x, point.z, particle.initial_pos.f[0], particle.initial_pos.f[2]);
 
@@ -156,4 +156,12 @@ void Rasterization::Rasterize(Cloth& cloth, const csf::PointCloud& pc, std::vect
             heightVal[i] = findHeightValByScanline(pcur, cloth);
         }
     }
+
+    //TODO: RJ this was added to fix a minor consistency issue. it should be audited and removed.
+    for (int i = 0; i < cloth.getSize(); i++)
+    {
+        Particle& pcur  = cloth.getParticle(i);
+        pcur.is_visited = false;
+    }
+
 }

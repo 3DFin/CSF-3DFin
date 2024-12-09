@@ -77,11 +77,18 @@ Cloth CSF::do_cloth()
         origin_pos, width_num, height_num, params.cloth_resolution, params.cloth_resolution, 0.3, 9999,
         params.rigidness, params.time_step);
 
+    auto start_raster = std::chrono::system_clock::now();
     std::cout << "Rasterizing..." << std::endl;
     Rasterization::Rasterize(cloth, point_cloud, cloth.getHeightvals());
+    auto stop_raster = std::chrono::system_clock::now();
+    auto elapsed_raster =
+        std::chrono::duration_cast<std::chrono::milliseconds>(stop_raster - start_raster);
+    std::cout << "-> time raster " << elapsed_raster.count() << " ms"<< std::endl;
+    
+    cloth.saveToFile("init_cloth.txt");
 
+    auto start_simul = std::chrono::system_clock::now();
     std::cout << "Simulating..." << std::endl;
-
     for (int i = 0; i < params.iterations; i++)
     {
         const double max_diff = cloth.timeStep();
@@ -93,11 +100,20 @@ Cloth CSF::do_cloth()
             break;
         }
     }
+    auto stop_simul = std::chrono::system_clock::now();
+    auto elapsed_simul =
+        std::chrono::duration_cast<std::chrono::milliseconds>(stop_simul - start_simul);
+    std::cout << "-> time cloth simulation " << elapsed_simul.count() << " ms"<< std::endl;
 
     if (params.smooth_slope)
     {
-        std::cout << " - post handle..." << std::endl;
+        auto start_slope = std::chrono::system_clock::now();
+        std::cout << "Slope post processing..." << std::endl;
         cloth.movableFilter();
+        auto stop_slope = std::chrono::system_clock::now();
+        auto elapsed_slope =
+        std::chrono::duration_cast<std::chrono::milliseconds>(stop_slope - start_slope);
+        std::cout << "-> time slope " << elapsed_slope.count() << " ms"<< std::endl;
     }
 
     return cloth;
