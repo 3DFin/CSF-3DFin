@@ -46,8 +46,18 @@ nanobind_add_module(
   ${CMAKE_CURRENT_SOURCE_DIR}/python/CSF_3DFin_ext.cpp
 )
 
+# Stub generation
+nanobind_add_stub(
+  CSF_3DFin_ext_stub
+  MODULE CSF_3DFin_ext
+  OUTPUT CSF_3DFin_ext.pyi
+  PYTHON_PATH $<TARGET_FILE_DIR:CSF_3DFin_ext>
+  DEPENDS CSF_3DFin_ext
+)
+
 target_link_libraries(CSF_3DFin_ext PRIVATE CSF)
-install(TARGETS CSF_3DFin_ext LIBRARY DESTINATION CSF_3DFin)
+install(TARGETS CSF_3DFin_ext DESTINATION CSF_3DFin)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/CSF_3DFin_ext.pyi DESTINATION CSF_3DFin)
 endif()
 
 if(BUILD_DEMO)
