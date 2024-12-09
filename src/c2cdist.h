@@ -24,14 +24,14 @@
 class c2cdist
 {
    public:
-    c2cdist(double threshold) : class_treshold(threshold) {}
+    c2cdist(double threshold) : class_threshold(threshold) {}
 
     ~c2cdist() = default;
 
    public:
     void calCloud2CloudDist(
-        Cloth& cloth, csf::PointCloud& pc, std::vector<int>& groundIndexes, std::vector<int>& offGroundIndexes);
+        const Cloth& cloth, const csf::PointCloud& pc, std::vector<int>& groundIndexes, std::vector<int>& offGroundIndexes);
 
    private:
-    double class_treshold;  //
+    double class_threshold;
 };

@@ -23,8 +23,8 @@
 // find height by scanning the nearest particles in the same row and column
 double Rasterization::findHeightValByScanline(Particle& p, const Cloth& cloth)
 {
-    int xpos = p.pos_x;
-    int ypos = p.pos_y;
+    const int xpos = p.pos_x;
+    const int ypos = p.pos_y;
     int cloth_width, cloth_height;
 
     std::tie(cloth_width, cloth_height) = cloth.getGridSize();
