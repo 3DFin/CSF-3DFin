@@ -21,8 +21,8 @@
 #include <fstream>
 
 Cloth::Cloth(
-    const Vec3& _origin_pos, int _num_particles_width, int _num_particles_height, double _step_x, double _step_y,
-    double _smoothThreshold, double _heightThreshold, uint32_t rigidness, double time_step)
+    const Vec3& _origin_pos, uint32_t _num_particles_width, uint32_t _num_particles_height, double _step_x,
+    double _step_y, double _smoothThreshold, double _heightThreshold, uint32_t rigidness, double time_step)
     : constraint_iterations(rigidness),
       smoothThreshold(_smoothThreshold),
       heightThreshold(_heightThreshold),
@@ -32,8 +32,8 @@ Cloth::Cloth(
       num_particles_width(_num_particles_width),
       num_particles_height(_num_particles_height)
 {
-    const double     time_step2   = time_step * time_step;
-    const double     displacement = -gravity * time_step2;
+    const double time_step2   = time_step * time_step;
+    const double displacement = -gravity * time_step2;
 
     // We are essentially using this vector as an array with room for
     // num_particles_width*num_particles_height particles
@@ -41,9 +41,9 @@ Cloth::Cloth(
     // creating particles in a grid of particles from (0,0,0) to
     // (width,-height,0) creating particles in a grid
 
-    for (int i = 0; i < num_particles_height; i++)
+    for (uint32_t i = 0; i < num_particles_height; i++)
     {  // arrange in Row Major order
-        for (int j = 0; j < num_particles_width; j++)
+        for (uint32_t j = 0; j < num_particles_width; j++)
         {
             // insert particle in column i at j'th row
             particles.emplace_back(
@@ -53,9 +53,9 @@ Cloth::Cloth(
 
     // Connecting immediate neighbor particles with constraints
     // (distance 1 and sqrt(2) in the grid)
-    for (int x = 0; x < num_particles_width; x++)
+    for (uint32_t x = 0; x < num_particles_width; x++)
     {
-        for (int y = 0; y < num_particles_height; y++)
+        for (uint32_t y = 0; y < num_particles_height; y++)
         {
             if (x < num_particles_width - 1) { makeConstraint(&getParticle(x, y), &getParticle(x + 1, y)); }
 
@@ -71,9 +71,9 @@ Cloth::Cloth(
 
     // Connecting secondary neighbors with constraints (distance 2 and sqrt(4) in
     // the grid)
-    for (int x = 0; x < num_particles_width; x++)
+    for (uint32_t x = 0; x < num_particles_width; x++)
     {
-        for (int y = 0; y < num_particles_height; y++)
+        for (uint32_t y = 0; y < num_particles_height; y++)
         {
             if (x < num_particles_width - 2) { makeConstraint(&getParticle(x, y), &getParticle(x + 2, y)); }
 
@@ -130,18 +130,18 @@ void Cloth::terrCollision()
 
 void Cloth::movableFilter()
 {
-    for (int x = 0; x < num_particles_width; x++)
+    for (uint32_t x = 0; x < num_particles_width; x++)
     {
-        for (int y = 0; y < num_particles_height; y++)
+        for (uint32_t y = 0; y < num_particles_height; y++)
         {
             const Particle& ptc = getParticle(x, y);
 
             if (ptc.isMovable() && !ptc.is_visited)
             {
-                const int                     index = y * num_particles_width + x;
-                std::queue<int>               queue;
-                std::vector<XY>               connected;  // store the connected component
-                std::vector<std::vector<int>> neighbors;
+                const uint32_t                     index = y * num_particles_width + x;
+                std::queue<uint32_t>               queue;
+                std::vector<XY>                    connected;  // store the connected component
+                std::vector<std::vector<uint32_t>> neighbors;
                 uint32_t                           sum = 1;
 
                 // visit the init node
@@ -155,9 +155,9 @@ void Cloth::movableFilter()
                 {
                     const Particle& ptc_f = particles[queue.front()];
                     queue.pop();
-                    const int        cur_x = ptc_f.pos_x;
-                    const int        cur_y = ptc_f.pos_y;
-                    std::vector<int> neighbor;
+                    const uint32_t        cur_x = ptc_f.pos_x;
+                    const uint32_t        cur_y = ptc_f.pos_y;
+                    std::vector<uint32_t> neighbor;
 
                     if (cur_x > 0)
                     {
@@ -235,24 +235,24 @@ void Cloth::movableFilter()
 
                 if (sum > max_particle_for_post_processing)
                 {
-                    const std::vector<int> edgePoints = findUnmovablePoint(connected);
-                    handle_slop_connected(edgePoints, connected, neighbors);
+                    const std::vector<uint32_t> edgePoints = findUnmovablePoint(connected);
+                    handle_slope_connected(edgePoints, connected, neighbors);
                 }
             }
         }
     }
 }
 
-std::vector<int> Cloth::findUnmovablePoint(const std::vector<XY>& connected)
+std::vector<uint32_t> Cloth::findUnmovablePoint(const std::vector<XY>& connected)
 {
-    std::vector<int> edgePoints;
+    std::vector<uint32_t> edgePoints;
 
     for (size_t i = 0; i < connected.size(); i++)
     {
-        const int x     = connected[i].x;
-        const int y     = connected[i].y;
-        const int index = y * num_particles_width + x;
-        Particle& ptc   = getParticle(x, y);
+        const uint32_t x     = connected[i].x;
+        const uint32_t y     = connected[i].y;
+        const uint32_t index = y * num_particles_width + x;
+        Particle&      ptc   = getParticle(x, y);
 
         // TODO RJ: this was pulled off the if(std::fabs(...)) test
         //  of each neighbor test. Verify if the test is correct in the paper
@@ -265,7 +265,7 @@ std::vector<int> Cloth::findUnmovablePoint(const std::vector<XY>& connected)
 
             if (!ptc_x.isMovable())
             {
-                const int index_ref = y * num_particles_width + x - 1;
+                const uint32_t index_ref = y * num_particles_width + x - 1;
 
                 if (std::fabs(height_values[index] - height_values[index_ref]) < smoothThreshold)
                 {
@@ -283,7 +283,7 @@ std::vector<int> Cloth::findUnmovablePoint(const std::vector<XY>& connected)
 
             if (!ptc_x.isMovable())
             {
-                const int index_ref = y * num_particles_width + x + 1;
+                const uint32_t index_ref = y * num_particles_width + x + 1;
 
                 if (std::fabs(height_values[index] - height_values[index_ref]) < smoothThreshold)
                 {
@@ -301,7 +301,7 @@ std::vector<int> Cloth::findUnmovablePoint(const std::vector<XY>& connected)
 
             if (!ptc_y.isMovable())
             {
-                const int index_ref = (y - 1) * num_particles_width + x;
+                const uint32_t index_ref = (y - 1) * num_particles_width + x;
 
                 if (std::fabs(height_values[index] - height_values[index_ref]) < smoothThreshold)
                 {
@@ -319,7 +319,7 @@ std::vector<int> Cloth::findUnmovablePoint(const std::vector<XY>& connected)
 
             if (!ptc_y.isMovable())
             {
-                const int index_ref = (y + 1) * num_particles_width + x;
+                const uint32_t index_ref = (y + 1) * num_particles_width + x;
 
                 if (std::fabs(height_values[index] - height_values[index_ref]) < smoothThreshold)
                 {
@@ -335,25 +335,25 @@ std::vector<int> Cloth::findUnmovablePoint(const std::vector<XY>& connected)
     return edgePoints;
 }
 
-void Cloth::handle_slop_connected(
-    const std::vector<int>& edgePoints, const std::vector<XY>& connected,
-    const std::vector<std::vector<int>>& neighbors)
+void Cloth::handle_slope_connected(
+    const std::vector<uint32_t>& edgePoints, const std::vector<XY>& connected,
+    const std::vector<std::vector<uint32_t>>& neighbors)
 {
-    std::vector<bool> visited(connected.size(), false);
-    std::queue<int>   queue;
+    std::vector<bool>    visited(connected.size(), false);
+    std::queue<uint32_t> queue;
 
     for (size_t i = 0; i < edgePoints.size(); i++) { queue.push(edgePoints[i]); }
 
     while (!queue.empty())
     {
-        int index = queue.front();
+        const uint32_t index = queue.front();
         queue.pop();
 
-        int index_center = connected[index].y * num_particles_width + connected[index].x;
+        const uint32_t index_center = connected[index].y * num_particles_width + connected[index].x;
 
         for (size_t i = 0; i < neighbors[index].size(); i++)
         {
-            int index_neighbor =
+            const uint32_t index_neighbor =
                 connected[neighbors[index][i]].y * num_particles_width + connected[neighbors[index][i]].x;
 
             Particle& neighbor_particle = particles[index_neighbor];

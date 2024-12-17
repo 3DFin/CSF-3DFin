@@ -59,11 +59,8 @@
 
 struct XY
 {
-    XY(int x1, int y1)
-    {
-        x = x1;
-        y = y1;
-    }
+    XY(uint32_t x1, uint32_t y1) : x(x1), y(y1) {}
+    ~XY() = default;
 
     int x;
     int y;
@@ -75,8 +72,8 @@ class Cloth
     /* This is a important constructor for the entire system of
      * particles and constraints */
     Cloth(
-        const Vec3& origin_pos, int num_particles_width, int num_particles_height, double step_x, double step_y,
-        double smoothThreshold, double heightThreshold, uint32_t rigidness, double time_step);
+        const Vec3& origin_pos, uint32_t num_particles_width, uint32_t num_particles_height, double step_x,
+        double step_y, double smoothThreshold, double heightThreshold, uint32_t rigidness, double time_step);
 
     ~Cloth() = default;
 
@@ -91,21 +88,21 @@ class Cloth
 
     void movableFilter();
 
-    std::vector<int> findUnmovablePoint(const std::vector<XY>& connected);
+    std::vector<uint32_t> findUnmovablePoint(const std::vector<XY>& connected);
 
-    void handle_slop_connected(
-        const std::vector<int>& edgePoints, const std::vector<XY>& connected,
-        const std::vector<std::vector<int>>& neighbors);
+    void handle_slope_connected(
+        const std::vector<uint32_t>& edgePoints, const std::vector<XY>& connected,
+        const std::vector<std::vector<uint32_t>>& neighbors);
 
     void saveToFile(std::string path = "");
 
     void saveMovableToFile(std::string path = "");
 
-    Particle& getParticle(int x, int y) { return particles[y * num_particles_width + x]; }
+    Particle& getParticle(uint32_t x, uint32_t y) { return particles[y * num_particles_width + x]; }
 
-    const Particle& getParticle(int x, int y) const { return particles[y * num_particles_width + x]; }
+    const Particle& getParticle(uint32_t x, uint32_t y) const { return particles[y * num_particles_width + x]; }
 
-    Particle& getParticle(int index) { return particles[index]; }
+    Particle& getParticle(uint32_t index) { return particles[index]; }
 
     const std::vector<Particle>& getParticles() const { return particles; }
 
@@ -115,9 +112,12 @@ class Cloth
         p2->neighborsList.push_back(p1);
     }
 
-    int getSize() const { return num_particles_width * num_particles_height; }
+    uint32_t getSize() const { return num_particles_width * num_particles_height; }
 
-    std::pair<int, int> getGridSize() const { return std::make_pair(num_particles_width, num_particles_height); }
+    std::pair<uint32_t, uint32_t> getGridSize() const
+    {
+        return std::make_pair(num_particles_width, num_particles_height);
+    }
 
     std::vector<double>& getHeightvals() { return height_values; }
 
@@ -133,8 +133,8 @@ class Cloth
 
     const uint32_t constraint_iterations;  // rigidness
 
-    const int num_particles_width;  // number of particles in width direction
-    const int num_particles_height;  // number of particles in height direction
+    const uint32_t num_particles_width;  // number of particles in width direction
+    const uint32_t num_particles_height;  // number of particles in height direction
 
     const double smoothThreshold;
     const double heightThreshold;

@@ -59,11 +59,11 @@ Cloth CSF::do_cloth()
         bbMin.x - clothbuffer_d * params.cloth_resolution, bbMax.y + cloth_y_height,
         bbMin.z - clothbuffer_d * params.cloth_resolution);
 
-    const int width_num =
-        static_cast<int>(std::floor((bbMax.x - bbMin.x) / params.cloth_resolution)) + 2 * clothbuffer_d;
+    const uint32_t width_num =
+        static_cast<uint32_t>(std::floor((bbMax.x - bbMin.x) / params.cloth_resolution)) + 2 * clothbuffer_d;
 
-    const int height_num =
-        static_cast<int>(std::floor((bbMax.z - bbMin.z) / params.cloth_resolution)) + 2 * clothbuffer_d;
+    const uint32_t height_num =
+        static_cast<uint32_t>(std::floor((bbMax.z - bbMin.z) / params.cloth_resolution)) + 2 * clothbuffer_d;
 
     std::cout << "Configuring cloth..." << std::endl;
     std::cout << " - width: " << width_num << " "

@@ -60,7 +60,7 @@ class Particle
     static constexpr double one_minus_damping = 1.0 - damping;
 
    public:
-    Particle(const Vec3& pos, const double displacement, const int pos_x, const int pos_y)
+    Particle(const Vec3& pos, const double displacement, const uint32_t pos_x, const uint32_t pos_y)
         : movable(true),
           displacement(displacement),
           initial_pos(pos),
@@ -117,8 +117,8 @@ class Particle
     // on the grid
     const Vec3 initial_pos;
 
-    const int pos_x;  // position in the cloth grid
-    const int pos_y;
+    const uint32_t pos_x;  // position in the cloth grid
+    const uint32_t pos_y;
 
     bool   is_visited;
     double tmp_dist;
