@@ -22,7 +22,7 @@
 
 Cloth::Cloth(
     const Vec3& _origin_pos, int _num_particles_width, int _num_particles_height, double _step_x, double _step_y,
-    double _smoothThreshold, double _heightThreshold, int rigidness, double time_step)
+    double _smoothThreshold, double _heightThreshold, uint32_t rigidness, double time_step)
     : constraint_iterations(rigidness),
       smoothThreshold(_smoothThreshold),
       heightThreshold(_heightThreshold),
@@ -32,7 +32,6 @@ Cloth::Cloth(
       num_particles_width(_num_particles_width),
       num_particles_height(_num_particles_height)
 {
-    constexpr double gravity      = 0.2;  // TODO: make it a parameter
     const double     time_step2   = time_step * time_step;
     const double     displacement = -gravity * time_step2;
 
@@ -143,7 +142,7 @@ void Cloth::movableFilter()
                 std::queue<int>               queue;
                 std::vector<XY>               connected;  // store the connected component
                 std::vector<std::vector<int>> neighbors;
-                int                           sum = 1;
+                uint32_t                           sum = 1;
 
                 // visit the init node
                 connected.emplace_back(x, y);

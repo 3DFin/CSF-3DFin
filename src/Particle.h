@@ -61,10 +61,14 @@ class Particle
 
    public:
     Particle(const Vec3& pos, const double displacement, const int pos_x, const int pos_y)
-        : movable(true), displacement(displacement), initial_pos(pos), pos_x(pos_x), pos_y(pos_y)
+        : movable(true),
+          displacement(displacement),
+          initial_pos(pos),
+          pos_x(pos_x),
+          pos_y(pos_y),
+          c_pos(0),
+          is_visited(false)
     {
-        is_visited           = false;
-        c_pos                = 0;
         tmp_dist             = MAX_INF;
         height               = initial_pos.f[1];
         nearest_point_height = MIN_INF;
@@ -98,10 +102,10 @@ class Particle
 
     void printself(std::string s = "") const
     {
-        std::cout << s << ": " << initial_pos.f[0] << " movable:  " << this->movable << std::endl;
+        std::cout << s << ": " << initial_pos.f[0] << " movable:  " << movable << std::endl;
     }
 
-    void satisfyConstraintSelf(int constraint_times);
+    void satisfyConstraintSelf(uint32_t constraint_times);
 
    public:
     // These two members are used in the process of edge smoothing after
@@ -113,8 +117,8 @@ class Particle
     // on the grid
     const Vec3 initial_pos;
 
-    int pos_x;  // position in the cloth grid
-    int pos_y;
+    const int pos_x;  // position in the cloth grid
+    const int pos_y;
 
     bool   is_visited;
     double tmp_dist;

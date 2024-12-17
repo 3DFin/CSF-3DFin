@@ -32,7 +32,7 @@ void Particle::timeStep()
     }
 }
 
-void Particle::satisfyConstraintSelf(int constraint_times)
+void Particle::satisfyConstraintSelf(uint32_t constraint_times)
 {
     Particle* current_particle = this;
 

@@ -31,7 +31,7 @@ class Constraint
 
    public:
     Constraint(Particle* p1, Particle* p2) : p1(p1), p2(p2) {}
-    
+
     ~Constraint() = default;
 
     /* This is one of the important methods, where a single constraint

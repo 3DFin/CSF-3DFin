@@ -45,16 +45,18 @@
 
 struct Params
 {
-    // refer to the website:http://ramm.bnu.edu.cn/projects/CSF/ for the setting
-    // of these paramters
-    bool   smooth_slope     = true;
-    double time_step        = 0.65;
-    double class_threshold  = 0.5;
-    double cloth_resolution = 1.0;
-    int    rigidness        = 3;
-    int    iterations      = 500;
-};
+    Params() = default;
+    ~Params() = default;
 
+    // refer to the website:http://ramm.bnu.edu.cn/projects/CSF/ for th`e setting
+    // of these paramters
+    bool   smooth_slope{true};
+    double time_step{0.65};
+    double class_threshold{0.5};
+    double cloth_resolution{1.0};
+    uint32_t    rigidness{3};
+    uint32_t    iterations{500};
+};
 
 #ifdef _CSF_DLL_EXPORT_
 class DLL_API CSF
@@ -82,21 +84,18 @@ class CSF
     const csf::PointCloud& getPointCloud() const { return point_cloud; }
 
     // save points to file
+    // The results are index of ground points in the original point cloud
     void savePoints(const std::vector<int>& grp, const std::string& path) const;
-
-    // get size of pointcloud
-    size_t size() const { return point_cloud.size(); }
-
-    // The results are index of ground points in the original
+    
     // pointcloud and write the cloth particles coordinates
     void do_filtering(
         std::vector<int>& groundIndexes, std::vector<int>& offGroundIndexes, const bool exportCloth = true);
+    
     // Do the filtering and return the Cloth object
     Cloth do_cloth();
 
    public:
     Params params;
-    int    index;
 
    private:
     csf::PointCloud point_cloud;

@@ -71,12 +71,12 @@ struct XY
 
 class Cloth
 {
-public:
+   public:
     /* This is a important constructor for the entire system of
      * particles and constraints */
     Cloth(
         const Vec3& origin_pos, int num_particles_width, int num_particles_height, double step_x, double step_y,
-        double smoothThreshold, double heightThreshold, int rigidness, double time_step);
+        double smoothThreshold, double heightThreshold, uint32_t rigidness, double time_step);
 
     ~Cloth() = default;
 
@@ -106,7 +106,7 @@ public:
     const Particle& getParticle(int x, int y) const { return particles[y * num_particles_width + x]; }
 
     Particle& getParticle(int index) { return particles[index]; }
-   
+
     const std::vector<Particle>& getParticles() const { return particles; }
 
     void makeConstraint(Particle* p1, Particle* p2)
@@ -117,28 +117,27 @@ public:
 
     int getSize() const { return num_particles_width * num_particles_height; }
 
-    std::pair<int, int> getGridSize() const {return std::make_pair(num_particles_width, num_particles_height);}
+    std::pair<int, int> getGridSize() const { return std::make_pair(num_particles_width, num_particles_height); }
 
     std::vector<double>& getHeightvals() { return height_values; }
 
-
    public:
-    Vec3                origin_pos;
-    double              step_x, step_y;
+    const Vec3          origin_pos;
+    const double        step_x, step_y;
     std::vector<double> height_values;  // height values
 
    private:
     // post processing is only for connected component which is large than 50
-    static constexpr int max_particle_for_post_processing = 50;
-    int                  constraint_iterations;
-    int                  rigidness;
-    double               time_step;
+    static constexpr uint32_t max_particle_for_post_processing = 50;
+    static constexpr double   gravity                          = 0.2;  // TODO: make it a parameter
+
+    const uint32_t constraint_iterations;  // rigidness
+
+    const int num_particles_width;  // number of particles in width direction
+    const int num_particles_height;  // number of particles in height direction
+
+    const double smoothThreshold;
+    const double heightThreshold;
 
     std::vector<Particle> particles;  // all particles that are part of this cloth
-
-    int                 num_particles_width;  // number of particles in width direction
-    int                 num_particles_height;  // number of particles in height direction
-
-    double smoothThreshold;
-    double heightThreshold;
 };

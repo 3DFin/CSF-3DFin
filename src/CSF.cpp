@@ -51,8 +51,8 @@ Cloth CSF::do_cloth()
     std::cout << " - bbMin: " << bbMin.x << " " << bbMin.y << " " << bbMin.z << std::endl;
     std::cout << " - bbMax: " << bbMax.x << " " << bbMax.y << " " << bbMax.z << std::endl;
 
-    const double cloth_y_height = 0.05;
-    const int    clothbuffer_d  = 2;
+    const double   cloth_y_height = 0.05;
+    const uint32_t clothbuffer_d  = 2;
 
     // origin is shifted by clothbuffer_d * params.cloth_resolution
     const Vec3 origin_pos(
@@ -84,7 +84,7 @@ Cloth CSF::do_cloth()
 
     auto start_simul = std::chrono::system_clock::now();
     std::cout << "Simulating..." << std::endl;
-    for (int i = 0; i < params.iterations; i++)
+    for (uint32_t i = 0; i < params.iterations; i++)
     {
         const double max_diff = cloth.timeStep();
         cloth.terrCollision();
