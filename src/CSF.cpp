@@ -27,23 +27,19 @@
 #include "XYZReader.h"
 #include "c2cdist.h"
 
-void CSF::setPointCloud(const double* points, const int rows)
+void CSF::setPointCloud(const double* points, const size_t rows)
 {
 #define Mat(i, j) points[i + j * rows]
     point_cloud.resize(rows);
-    for (int i = 0; i < rows; i++) { point_cloud[i] = {Mat(i, 0), -Mat(i, 2), Mat(i, 1)}; }
+    for (size_t i = 0; i < rows; i++) { point_cloud[i] = {Mat(i, 0), -Mat(i, 2), Mat(i, 1)}; }
 }
 
-void CSF::setPointCloud(const csf::PointCloud& pc)
-{
-    int pointCount = static_cast<int>(pc.size());
-    point_cloud    = pc;
-}
+void CSF::setPointCloud(const csf::PointCloud& pc) { point_cloud = pc; }
 
 void CSF::readPointsFromFile(const std::string& filename)
 {
-    this->point_cloud.resize(0);
-    read_xyz(filename, this->point_cloud);
+    point_cloud.resize(0);
+    read_xyz(filename, point_cloud);
 }
 
 Cloth CSF::do_cloth()
@@ -80,11 +76,10 @@ Cloth CSF::do_cloth()
     auto start_raster = std::chrono::system_clock::now();
     std::cout << "Rasterizing..." << std::endl;
     Rasterization::Rasterize(cloth, point_cloud, cloth.getHeightvals());
-    auto stop_raster = std::chrono::system_clock::now();
-    auto elapsed_raster =
-        std::chrono::duration_cast<std::chrono::milliseconds>(stop_raster - start_raster);
-    std::cout << "-> time raster " << elapsed_raster.count() << " ms"<< std::endl;
-    
+    auto stop_raster    = std::chrono::system_clock::now();
+    auto elapsed_raster = std::chrono::duration_cast<std::chrono::milliseconds>(stop_raster - start_raster);
+    std::cout << "-> time raster " << elapsed_raster.count() << " ms" << std::endl;
+
     cloth.saveToFile("init_cloth.txt");
 
     auto start_simul = std::chrono::system_clock::now();
@@ -100,20 +95,18 @@ Cloth CSF::do_cloth()
             break;
         }
     }
-    auto stop_simul = std::chrono::system_clock::now();
-    auto elapsed_simul =
-        std::chrono::duration_cast<std::chrono::milliseconds>(stop_simul - start_simul);
-    std::cout << "-> time cloth simulation " << elapsed_simul.count() << " ms"<< std::endl;
+    auto stop_simul    = std::chrono::system_clock::now();
+    auto elapsed_simul = std::chrono::duration_cast<std::chrono::milliseconds>(stop_simul - start_simul);
+    std::cout << "-> time cloth simulation " << elapsed_simul.count() << " ms" << std::endl;
 
     if (params.smooth_slope)
     {
         auto start_slope = std::chrono::system_clock::now();
         std::cout << "Slope post processing..." << std::endl;
         cloth.movableFilter();
-        auto stop_slope = std::chrono::system_clock::now();
-        auto elapsed_slope =
-        std::chrono::duration_cast<std::chrono::milliseconds>(stop_slope - start_slope);
-        std::cout << "-> time slope " << elapsed_slope.count() << " ms"<< std::endl;
+        auto stop_slope    = std::chrono::system_clock::now();
+        auto elapsed_slope = std::chrono::duration_cast<std::chrono::milliseconds>(stop_slope - start_slope);
+        std::cout << "-> time slope " << elapsed_slope.count() << " ms" << std::endl;
     }
 
     return cloth;

@@ -58,15 +58,15 @@ Cloth::Cloth(
     {
         for (int y = 0; y < num_particles_height; y++)
         {
-            if (x < num_particles_width - 1) makeConstraint(&getParticle(x, y), &getParticle(x + 1, y));
+            if (x < num_particles_width - 1) { makeConstraint(&getParticle(x, y), &getParticle(x + 1, y)); }
 
-            if (y < num_particles_height - 1) makeConstraint(&getParticle(x, y), &getParticle(x, y + 1));
+            if (y < num_particles_height - 1) { makeConstraint(&getParticle(x, y), &getParticle(x, y + 1)); }
 
             if ((x < num_particles_width - 1) && (y < num_particles_height - 1))
+            {
                 makeConstraint(&getParticle(x, y), &getParticle(x + 1, y + 1));
-
-            if ((x < num_particles_width - 1) && (y < num_particles_height - 1))
                 makeConstraint(&getParticle(x + 1, y), &getParticle(x, y + 1));
+            }
         }
     }
 
@@ -76,15 +76,15 @@ Cloth::Cloth(
     {
         for (int y = 0; y < num_particles_height; y++)
         {
-            if (x < num_particles_width - 2) makeConstraint(&getParticle(x, y), &getParticle(x + 2, y));
+            if (x < num_particles_width - 2) { makeConstraint(&getParticle(x, y), &getParticle(x + 2, y)); }
 
-            if (y < num_particles_height - 2) makeConstraint(&getParticle(x, y), &getParticle(x, y + 2));
+            if (y < num_particles_height - 2) { makeConstraint(&getParticle(x, y), &getParticle(x + 2, y)); }
 
             if ((x < num_particles_width - 2) && (y < num_particles_height - 2))
+            {
                 makeConstraint(&getParticle(x, y), &getParticle(x + 2, y + 2));
-
-            if ((x < num_particles_width - 2) && (y < num_particles_height - 2))
                 makeConstraint(&getParticle(x + 2, y), &getParticle(x, y + 2));
+            }
         }
     }
 }
@@ -118,18 +118,14 @@ void Cloth::terrCollision()
     for (int i = 0; i < particleCount; i++)
     {
         Particle& curr_particle = particles[i];
-        
-        if(!curr_particle.isMovable())
-            continue;
-        
+
+        if (!curr_particle.isMovable()) { continue; };
+
         // if the particle height is inferior to the height value
         // defined by the rasterization it's considered to have crossed
         // the surface. the particle is made unmovable its height is forced
         // the value computed by the rasterization
-        if (curr_particle.height < height_values[i])
-        {
-            curr_particle.makeUnmovable(height_values[i]);
-        }
+        if (curr_particle.height < height_values[i]) { curr_particle.makeUnmovable(height_values[i]); }
     }
 }
 
@@ -160,8 +156,8 @@ void Cloth::movableFilter()
                 {
                     const Particle& ptc_f = particles[queue.front()];
                     queue.pop();
-                    const int              cur_x = ptc_f.pos_x;
-                    const int              cur_y = ptc_f.pos_y;
+                    const int        cur_x = ptc_f.pos_x;
+                    const int        cur_y = ptc_f.pos_y;
                     std::vector<int> neighbor;
 
                     if (cur_x > 0)
@@ -258,12 +254,11 @@ std::vector<int> Cloth::findUnmovablePoint(const std::vector<XY>& connected)
         const int y     = connected[i].y;
         const int index = y * num_particles_width + x;
         Particle& ptc   = getParticle(x, y);
-        
-        //TODO RJ: this was pulled off the if(std::fabs(...)) test
-        // of each neighbor test. Verify if the test is correct in the paper
-        // maybe it's nn.heigh - height_values[index]
-        if (ptc.height - height_values[index] < heightThreshold)
-            continue;
+
+        // TODO RJ: this was pulled off the if(std::fabs(...)) test
+        //  of each neighbor test. Verify if the test is correct in the paper
+        //  maybe it's nn.heigh - height_values[index]
+        if (ptc.height - height_values[index] < heightThreshold) { continue; };
 
         if (x > 0)
         {
