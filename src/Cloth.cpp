@@ -18,6 +18,7 @@
 
 #include "Cloth.h"
 
+#include <algorithm>
 #include <fstream>
 
 Cloth::Cloth(
