@@ -8,7 +8,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "CSF_3DFin"
-version = "2.0.0a2"
+version = "2.0.0a3"
 authors = [{ name = "Jianbo Qi", email = "jianboqi@126.com" }]
 maintainers = [{ name = "Romain Janvier", email = "romain.janvier@hotmail.fr" }]
 license = { file = "LICENSE.txt" }
