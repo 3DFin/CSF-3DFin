@@ -53,6 +53,7 @@
 #include <queue>
 #include <sstream>
 #include <string>
+#include <cstdint>
 
 #include "Particle.h"
 #include "Vec3.h"

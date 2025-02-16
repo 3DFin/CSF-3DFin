@@ -21,6 +21,7 @@
 #include "CSF.h"
 
 #include <fstream>
+#include <chrono>
 
 #include "Rasterization.h"
 #include "Vec3.h"

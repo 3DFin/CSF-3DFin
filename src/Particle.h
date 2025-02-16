@@ -19,6 +19,7 @@
 #pragma once
 
 #include <vector>
+#include <cstdint>
 
 #include "Vec3.h"
 
