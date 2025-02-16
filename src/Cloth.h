@@ -43,10 +43,15 @@
 #endif  // ifdef _WIN32
 #include <math.h>
 
+#include <iostream>
 #include <vector>
 #ifdef CSF_USE_OPENMP
 #include <omp.h>
 #endif
+#include <cmath>
+#include <list>
+#include <queue>
+#include <sstream>
 #include <string>
 
 #include "Particle.h"
