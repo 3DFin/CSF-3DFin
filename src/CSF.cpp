@@ -81,8 +81,6 @@ Cloth CSF::do_cloth()
     auto elapsed_raster = std::chrono::duration_cast<std::chrono::milliseconds>(stop_raster - start_raster);
     std::cout << "-> time raster " << elapsed_raster.count() << " ms" << std::endl;
 
-    cloth.saveToFile("init_cloth.txt");
-
     auto start_simul = std::chrono::system_clock::now();
     std::cout << "Simulating..." << std::endl;
     for (uint32_t i = 0; i < params.iterations; i++)
