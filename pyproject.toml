@@ -8,7 +8,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "CSF_3DFin"
-version = "2.0.0a1"
+version = "2.0.0a2"
 authors = [{ name = "Jianbo Qi", email = "jianboqi@126.com" }]
 maintainers = [{ name = "Romain Janvier", email = "romain.janvier@hotmail.fr" }]
 license = { file = "LICENSE.txt" }
@@ -28,7 +28,6 @@ Changelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"
 minimum-version = "0.10"
 build-dir = "build/{wheel_tag}"
 # Build stable ABI wheels for CPython 3.12+
-wheel.py-api = "cp312"
 cmake.args = ["-DCOMPILE_PYTHON_MODULE=ON"]
 
 [tool.cibuildwheel]
