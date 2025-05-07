@@ -18,45 +18,45 @@
 
 #include "Rasterization.h"
 
-#include <queue>
+#include <sys/types.h>
 
+#include <cstdint>
+#include <queue>
 // find height by scanning the nearest particles in the same row and column
 double Rasterization::findHeightValByScanline(Particle& p, const Cloth& cloth)
 {
-    const int xpos = p.pos_x;
-    const int ypos = p.pos_y;
-    int cloth_width, cloth_height;
+    const uint32_t xpos = p.pos_x;
+    const uint32_t ypos = p.pos_y;
+    uint32_t       cloth_width, cloth_height;
 
     std::tie(cloth_width, cloth_height) = cloth.getGridSize();
 
-    for (int i = xpos + 1; i < cloth_width; i++)
+    for (uint32_t i = xpos + 1; i < cloth_width; i++)
     {
         const double crresHeight = cloth.getParticle(i, ypos).nearest_point_height;
 
         if (crresHeight > MIN_INF) return crresHeight;
     }
 
-    for (int i = xpos - 1; i >= 0; i--)
+    for (int32_t i = static_cast<int32_t>(xpos) - 1; i >= 0; --i)
     {
         const double crresHeight = cloth.getParticle(i, ypos).nearest_point_height;
 
         if (crresHeight > MIN_INF) return crresHeight;
     }
-
-    for (int j = ypos - 1; j >= 0; j--)
+    for (int32_t j = static_cast<int32_t>(ypos) - 1; j >= 0; --j)
     {
         const double crresHeight = cloth.getParticle(xpos, j).nearest_point_height;
 
         if (crresHeight > MIN_INF) return crresHeight;
     }
 
-    for (int j = ypos + 1; j < cloth_height; j++)
+    for (uint32_t j = ypos + 1; j < cloth_height; j++)
     {
         const double crresHeight = cloth.getParticle(xpos, j).nearest_point_height;
 
         if (crresHeight > MIN_INF) return crresHeight;
     }
-
     return findHeightValByNeighbor(p);
 }
 
@@ -144,7 +144,7 @@ void Rasterization::Rasterize(Cloth& cloth, const csf::PointCloud& pc, std::vect
     }
 
     heightVal.resize(cloth.getSize());
-    for (int i = 0; i < cloth.getSize(); i++)
+    for (uint32_t i = 0; i < cloth.getSize(); i++)
     {
         Particle&    pcur           = cloth.getParticle(i);
         const double nearest_height = pcur.nearest_point_height;
@@ -157,11 +157,10 @@ void Rasterization::Rasterize(Cloth& cloth, const csf::PointCloud& pc, std::vect
         }
     }
 
-    //TODO: RJ this was added to fix a minor consistency issue. it should be audited and removed.
-    for (int i = 0; i < cloth.getSize(); i++)
+    // TODO: RJ this was added to fix a minor consistency issue. it should be audited and removed.
+    for (uint32_t i = 0; i < cloth.getSize(); i++)
     {
         Particle& pcur  = cloth.getParticle(i);
         pcur.is_visited = false;
     }
-
 }

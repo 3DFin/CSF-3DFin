@@ -1,4 +1,5 @@
-﻿// ======================================================================================
+﻿#pragma once
+// ======================================================================================
 // Copyright 2017 State Key Laboratory of Remote Sensing Science,
 // Institute of Remote Sensing Science and Engineering, Beijing Normal
 // University
@@ -27,7 +28,6 @@
 // #######################################################################################
 
 // cloth simulation filter for airborne lidar filtering
-#pragma once
 
 #include <string>
 #include <vector>
@@ -86,11 +86,11 @@ class CSF
     // save points to file
     // The results are index of ground points in the original point cloud
     void savePoints(const std::vector<int>& grp, const std::string& path) const;
-    
+
     // pointcloud and write the cloth particles coordinates
     void do_filtering(
         std::vector<int>& groundIndexes, std::vector<int>& offGroundIndexes, const bool exportCloth = true);
-    
+
     // Do the filtering and return the Cloth object
     Cloth do_cloth();
 

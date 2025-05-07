@@ -1,14 +1,14 @@
 [build-system]
 requires = [
-    "scikit-build-core~=0.10.7",
-    "nanobind ~=2.5.0",
+    "scikit-build-core~=0.11.0",
+    "nanobind ~=2.7.0",
     "typing-extensions ; python_version < '3.11'",
 ]
 build-backend = "scikit_build_core.build"
 
 [project]
 name = "CSF_3DFin"
-version = "2.0.0a3"
+version = "2.0.0a4"
 authors = [{ name = "Jianbo Qi", email = "jianboqi@126.com" }]
 maintainers = [{ name = "Romain Janvier", email = "romain.janvier@hotmail.fr" }]
 license = { file = "LICENSE.txt" }
@@ -16,19 +16,21 @@ keywords = ["LiDAR", "DTM", "DSM", "Classification"]
 description = "CSF: Ground Filtering based on Cloth Simulation"
 requires-python = ">=3.10,<3.14"
 dependencies = [
-    "numpy>1.23", #NEP 29
+    "laspy>=2.5.4",
+    "numpy>1.23",   #NEP 29
 ]
 
 [project.urls]
 Repository = "https://github.com/3DFin/CSF-3DFIN"
-Issues = "https://github.com/me/spam/issues"
-Changelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"
 
 [tool.scikit-build]
 minimum-version = "0.10"
 build-dir = "build/{wheel_tag}"
 # Build stable ABI wheels for CPython 3.12+
-cmake.args = ["-DCOMPILE_PYTHON_MODULE=ON"]
+cmake.args = [
+    "-DCOMPILE_PYTHON_MODULE=ON",
+    "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+]
 
 [tool.cibuildwheel]
 build = "cp3{10,11,12,13}-*"

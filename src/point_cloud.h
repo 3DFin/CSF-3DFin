@@ -1,4 +1,5 @@
-﻿// ======================================================================================
+#pragma once
+// ======================================================================================
 // Copyright 2017 State Key Laboratory of Remote Sensing Science,
 // Institute of Remote Sensing Science and Engineering, Beijing Normal
 // University
@@ -25,9 +26,6 @@
 // Zhang; Jianbo Qi; Peng Wan; Hongtao Wang                # # # # contact us:
 // 2009zwm@gmail.com; wpqjbzwm@126.com                # # #
 // #######################################################################################
-
-#pragma once
-
 #include <vector>
 
 namespace csf

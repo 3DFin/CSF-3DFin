@@ -1,3 +1,4 @@
+#pragma once
 // ======================================================================================
 // Copyright 2017 State Key Laboratory of Remote Sensing Science,
 // Institute of Remote Sensing Science and Engineering, Beijing Normal
@@ -15,11 +16,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // ======================================================================================
-
-#pragma once
-
 #include <string>
-#include <vector>
 
 #include "point_cloud.h"
 

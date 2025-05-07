@@ -66,15 +66,15 @@ NB_MODULE(CSF_3DFin_ext, m)
                 ReturnValues* result = new ReturnValues();
 
                 nb::capsule capsule(result, [](void* p) noexcept { delete (ReturnValues*)p; });
-                
+
 
                 std::streambuf* old_buffer = nullptr;
                 if (!verbose) old_buffer = std::cout.rdbuf(nullptr);
 
                 csf.do_filtering(result->ground_indices, result->off_ground_indices, false);
-               
+
                 if (!verbose) std::cout.rdbuf(old_buffer);
-                
+
                 size_t size_ground = result->ground_indices.size();
                 size_t size_off    = result->off_ground_indices.size();
 

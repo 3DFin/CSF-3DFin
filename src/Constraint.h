@@ -1,3 +1,5 @@
+#pragma once
+
 // ======================================================================================
 // Copyright 2017 State Key Laboratory of Remote Sensing Science,
 // Institute of Remote Sensing Science and Engineering, Beijing Normal
@@ -16,10 +18,8 @@
 // limitations under the License.
 // ======================================================================================
 
-#pragma once
 
 #include "Particle.h"
-#include "Vec3.h"
 
 class Constraint
 {

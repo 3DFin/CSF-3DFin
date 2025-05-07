@@ -1,3 +1,5 @@
+#pragma once
+
 // ======================================================================================
 // Copyright 2017 State Key Laboratory of Remote Sensing Science,
 // Institute of Remote Sensing Science and Engineering, Beijing Normal
@@ -35,25 +37,18 @@
  */
 // using discrete steps (drop and pull) to approximate the physical process
 
-#pragma once
 
 #ifdef _WIN32
 #define NOMINMAX
 #include <windows.h>
 #endif  // ifdef _WIN32
-#include <math.h>
 
-#include <iostream>
 #include <vector>
 #ifdef CSF_USE_OPENMP
 #include <omp.h>
 #endif
-#include <cmath>
-#include <list>
-#include <queue>
-#include <sstream>
-#include <string>
 #include <cstdint>
+#include <string>
 
 #include "Particle.h"
 #include "Vec3.h"
@@ -63,8 +58,8 @@ struct XY
     XY(uint32_t x1, uint32_t y1) : x(x1), y(y1) {}
     ~XY() = default;
 
-    int x;
-    int y;
+    uint32_t x;
+    uint32_t y;
 };
 
 class Cloth

@@ -1,3 +1,4 @@
+#pragma once
 // ======================================================================================
 // Copyright 2017 State Key Laboratory of Remote Sensing Science,
 // Institute of Remote Sensing Science and Engineering, Beijing Normal
@@ -15,13 +16,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // ======================================================================================
-
-#pragma once
-
 #include <cmath>
-#include <iomanip>
-#include <iostream>
-#include <string>
 
 // a minimal vector class of 3 doubles and overloaded math operators
 class Vec3
@@ -43,7 +38,7 @@ class Vec3
     Vec3 normalized()
     {
         double l = length();
-        
+
         return Vec3(f[0] / l, f[1] / l, f[2] / l);
     }
 

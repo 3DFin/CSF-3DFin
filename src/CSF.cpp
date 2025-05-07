@@ -15,13 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // ======================================================================================
-
-#define DLL_IMPLEMENT
-
 #include "CSF.h"
 
-#include <fstream>
 #include <chrono>
+#include <fstream>
 
 #include "Rasterization.h"
 #include "Vec3.h"
@@ -62,7 +59,6 @@ Cloth CSF::do_cloth()
 
     const uint32_t width_num =
         static_cast<uint32_t>(std::floor((bbMax.x - bbMin.x) / params.cloth_resolution)) + 2 * clothbuffer_d;
-
     const uint32_t height_num =
         static_cast<uint32_t>(std::floor((bbMax.z - bbMin.z) / params.cloth_resolution)) + 2 * clothbuffer_d;
 
