@@ -20,6 +20,8 @@
 
 #include <fstream>
 #include <algorithm>
+#include <iomanip>
+#include <queue>
 
 Cloth::Cloth(
     const Vec3& _origin_pos, uint32_t _num_particles_width, uint32_t _num_particles_height, double _step_x,

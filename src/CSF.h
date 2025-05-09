@@ -68,11 +68,6 @@ class CSF
     CSF()  = default;
     ~CSF() = default;
 
-    // set point cloud from a one-dimensional array. it defines a N*3 point cloud
-    // by the given rows. it is the method used to set point cloud from matlab and
-    // numpy
-    void setPointCloud(const double* points, const size_t rows);
-
     // PointCloud set pointcloud
     void setPointCloud(const csf::PointCloud& pc);
 

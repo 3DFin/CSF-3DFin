@@ -19,18 +19,12 @@
 
 #include <chrono>
 #include <fstream>
+#include <iomanip>
 
 #include "Rasterization.h"
 #include "Vec3.h"
 #include "XYZReader.h"
 #include "c2cdist.h"
-
-void CSF::setPointCloud(const double* points, const size_t rows)
-{
-#define Mat(i, j) points[i + j * rows]
-    point_cloud.resize(rows);
-    for (size_t i = 0; i < rows; i++) { point_cloud[i] = {Mat(i, 0), -Mat(i, 2), Mat(i, 1)}; }
-}
 
 void CSF::setPointCloud(const csf::PointCloud& pc) { point_cloud = pc; }
 

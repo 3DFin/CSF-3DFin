@@ -23,8 +23,19 @@ NB_MODULE(CSF_3DFin_ext, m)
     nb::class_<CSF>(m, "CSF")
         .def(nb::init<>())
         .def(
-            "set_point_cloud", [](CSF& csf, nb::ndarray<double, nb::numpy, nb::shape<-1, 3>> point_cloud)
-            { csf.setPointCloud(point_cloud.data(), point_cloud.shape(0)); }, "point_cloud"_a.noconvert())
+            "set_point_cloud",
+            [](CSF& csf, nb::ndarray<double, nb::numpy, nb::shape<-1, 3>> point_cloud)
+            {
+                auto & csf_pc = csf.getPointCloud();
+                csf_pc.resize(point_cloud.shape(0));
+                auto v = point_cloud.view();
+
+                for (size_t i = 0; i < v.shape(0); ++i)
+                {
+                    csf_pc[i] = {v(i, 0), -v(i, 2), v(i, 1)};
+                }
+            },
+            "point_cloud"_a.noconvert())
         .def(
             "do_cloth",
             [](CSF& csf, bool verbose)
@@ -67,7 +78,6 @@ NB_MODULE(CSF_3DFin_ext, m)
 
                 nb::capsule capsule(result, [](void* p) noexcept { delete (ReturnValues*)p; });
 
-
                 std::streambuf* old_buffer = nullptr;
                 if (!verbose) old_buffer = std::cout.rdbuf(nullptr);
 
@@ -81,6 +91,7 @@ NB_MODULE(CSF_3DFin_ext, m)
                 return std::make_pair(
                     nb::ndarray<nb::numpy, int>(result->ground_indices.data(), {size_ground}, capsule),
                     nb::ndarray<nb::numpy, int>(result->off_ground_indices.data(), {size_off}, capsule));
-            }, "verbose"_a = true)
+            },
+            "verbose"_a = true)
         .def_rw("params", &CSF::params);
 }
