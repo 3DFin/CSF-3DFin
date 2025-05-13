@@ -125,8 +125,8 @@ void Rasterization::Rasterize(Cloth& cloth, const csf::PointCloud& pc, std::vect
     {
         const double delta_x = point.x - cloth.origin_pos.f[0];
         const double delta_z = point.z - cloth.origin_pos.f[2];
-        const int    col     = int(delta_x / cloth.step_x + 0.5);
-        const int    row     = int(delta_z / cloth.step_y + 0.5);
+        const int32_t    col     = int32_t(delta_x / cloth.step_x + 0.5);
+        const int32_t    row     = int32_t(delta_z / cloth.step_y + 0.5);
 
         if ((col >= 0) && (row >= 0))
         {

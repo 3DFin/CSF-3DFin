@@ -43,7 +43,12 @@
 #endif  // ifdef DLL_IMPLEMENT
 #endif  // ifdef _CSF_DLL_EXPORT_
 
+
+#ifdef _CSF_DLL_EXPORT_
+class DLL_API Params
+#else
 struct Params
+#endif
 {
     Params() = default;
     ~Params() = default;

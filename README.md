@@ -9,7 +9,7 @@ W. Zhang, J. Qi*, P. Wan, H. Wang, D. Xie, X. Wang, and G. Yan, “An Easy-to-Us
 
 **This is a modified version of the original Code for 3DFin purposes**
 
-For now this is only intended to be used inside [3DFin](https://github.com/3DFin/3Dfin)/[dendromatics](https://github.com/3DFin/dendromatics). 
+For now this is only intended to be used inside [3DFin](https://github.com/3DFin/3Dfin)/[dendromatics](https://github.com/3DFin/dendromatics).
 But this repository also serve as a playground to bootstrap a planned full rewrite of CSF.
 
 List of changes:
@@ -48,19 +48,6 @@ out_file.points = las_file.points[np.array(ground)] # extract ground points, and
 out_file.write(r"out.las")
 ```
 
-### How to use CSF in Matlab
-see more details from file `demo_mex.m` under matlab folder.
-
-### How to use CSF in R
-
-Thanks to the nice work of @Jean-Romain, through the collaboration, the CSF has been made as a R package, the details can be found in the [RCSF repository](https://github.com/Jean-Romain/RCSF). This package can be used easily with the [lidR package](https://github.com/Jean-Romain/lidR):
-
-```r
-library(lidR)
-las  <- readLAS("file.las")
-las  <- lasground(las, csf())
-```
-
 ### How to use CSF in C++
 Now, CSF is built by CMake, it produces a static library, which can be used by other c++ programs.
 #### linux
@@ -82,20 +69,5 @@ make
 sudo make install
 ```
 
-#### Windows
-You can use CMake GUI to generate visual studio solution file.
-
-### Binary Version
-For binary release version, it can be downloaded at: http://ramm.bnu.edu.cn/projects/CSF/download/
-
-Note: This code has been changed a lot since the publication of the corresponding paper. A lot of optimizations have been made. We are still working on it, and wish it could be better.
-
-### Cloudcompare Pulgin
-At last, if you are interested in Cloudcompare, there is a good news. our method has been implemented as a Cloudcompare plugin, you can refer to : https://github.com/cloudcompare/trunk
-
-### Related project
-A tool named `CSFTools` has been recently released, it is based on CSF, and provides dem/chm generation, normalization. Please refer to: https://github.com/jianboqi/CSFTools
-
 ### License
 CSF is maintained and developed by Jianbo QI. It is now released under Apache 2.0.
-
