@@ -18,7 +18,9 @@ NB_MODULE(CSF_3DFin_ext, m)
         .def_rw("class_threshold", &Params::class_threshold)
         .def_rw("cloth_resolution", &Params::cloth_resolution)
         .def_rw("rigidness", &Params::rigidness)
-        .def_rw("iterations", &Params::iterations);
+        .def_rw("iterations", &Params::iterations)
+        .def_rw("iter_tolerance", &Params::iter_tolerance)
+        .def_rw("verbose", &Params::verbose);
 
     nb::class_<CSF>(m, "CSF")
         .def(nb::init<>())
@@ -27,6 +29,7 @@ NB_MODULE(CSF_3DFin_ext, m)
             [](CSF& csf, nb::ndarray<double, nb::numpy, nb::shape<-1, 3>> point_cloud)
             {
                 auto & csf_pc = csf.getPointCloud();
+                csf_pc.clear();
                 csf_pc.resize(point_cloud.shape(0));
                 auto v = point_cloud.view();
 
@@ -37,15 +40,10 @@ NB_MODULE(CSF_3DFin_ext, m)
             },
             "point_cloud"_a.noconvert())
         .def(
-            "do_cloth",
-            [](CSF& csf, bool verbose)
+            "run_cloth_simulation",
+            [](CSF& csf)
             {
-                std::streambuf* old_buffer = nullptr;
-                if (!verbose) old_buffer = std::cout.rdbuf(nullptr);
-
-                auto cloth = csf.do_cloth();
-
-                if (!verbose) std::cout.rdbuf(old_buffer);
+                auto cloth = csf.runClothSimulation();
 
                 const auto& particles      = cloth.getParticles();
                 size_t      num_particles  = particles.size();
@@ -62,11 +60,10 @@ NB_MODULE(CSF_3DFin_ext, m)
 
                 nb::capsule capsule(raw_cloth_data, [](void* p) noexcept { delete[] (double*)p; });
                 return nb::ndarray<double, nb::numpy, nb::shape<-1, 3>>(raw_cloth_data, {num_particles, 3}, capsule);
-            },
-            "verbose"_a = true)
+            })
         .def(
-            "do_filtering",
-            [](CSF& csf, bool verbose)
+            "classify_ground",
+            [](CSF& csf)
             {
                 struct ReturnValues
                 {
@@ -78,12 +75,7 @@ NB_MODULE(CSF_3DFin_ext, m)
 
                 nb::capsule capsule(result, [](void* p) noexcept { delete (ReturnValues*)p; });
 
-                std::streambuf* old_buffer = nullptr;
-                if (!verbose) old_buffer = std::cout.rdbuf(nullptr);
-
-                csf.do_filtering(result->ground_indices, result->off_ground_indices, false);
-
-                if (!verbose) std::cout.rdbuf(old_buffer);
+                csf.classifyGround(result->ground_indices, result->off_ground_indices, false);
 
                 size_t size_ground = result->ground_indices.size();
                 size_t size_off    = result->off_ground_indices.size();
@@ -91,7 +83,6 @@ NB_MODULE(CSF_3DFin_ext, m)
                 return std::make_pair(
                     nb::ndarray<nb::numpy, int>(result->ground_indices.data(), {size_ground}, capsule),
                     nb::ndarray<nb::numpy, int>(result->off_ground_indices.data(), {size_off}, capsule));
-            },
-            "verbose"_a = true)
+            })
         .def_rw("params", &CSF::params);
 }

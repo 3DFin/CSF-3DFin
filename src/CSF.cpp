@@ -34,8 +34,11 @@ void CSF::readPointsFromFile(const std::string& filename)
     read_xyz(filename, point_cloud);
 }
 
-Cloth CSF::do_cloth()
+Cloth CSF::runClothSimulation()
 {
+    std::streambuf* old_buffer = nullptr;
+    if (!params.verbose) old_buffer = std::cout.rdbuf(nullptr);
+
     // Terrain
     std::cout << "Configuring terrain..." << std::endl;
     csf::Point bbMin, bbMax;
@@ -44,17 +47,17 @@ Cloth CSF::do_cloth()
     std::cout << " - bbMax: " << bbMax.x << " " << bbMax.y << " " << bbMax.z << std::endl;
 
     const double   cloth_y_height = 0.05;
-    const uint32_t clothbuffer_d  = 2;
+    const uint32_t cloth_margin  = 2;
 
     // origin is shifted by clothbuffer_d * params.cloth_resolution
     const Vec3 origin_pos(
-        bbMin.x - clothbuffer_d * params.cloth_resolution, bbMax.y + cloth_y_height,
-        bbMin.z - clothbuffer_d * params.cloth_resolution);
+        bbMin.x - cloth_margin * params.cloth_resolution, bbMax.y + cloth_y_height,
+        bbMin.z - cloth_margin * params.cloth_resolution);
 
     const uint32_t width_num =
-        static_cast<uint32_t>(std::floor((bbMax.x - bbMin.x) / params.cloth_resolution)) + 2 * clothbuffer_d;
+        static_cast<uint32_t>(std::floor((bbMax.x - bbMin.x) / params.cloth_resolution)) + 2 * cloth_margin;
     const uint32_t height_num =
-        static_cast<uint32_t>(std::floor((bbMax.z - bbMin.z) / params.cloth_resolution)) + 2 * clothbuffer_d;
+        static_cast<uint32_t>(std::floor((bbMax.z - bbMin.z) / params.cloth_resolution)) + 2 * cloth_margin;
 
     std::cout << "Configuring cloth..." << std::endl;
     std::cout << " - width: " << width_num << " "
@@ -75,15 +78,19 @@ Cloth CSF::do_cloth()
     std::cout << "Simulating..." << std::endl;
     for (uint32_t i = 0; i < params.iterations; i++)
     {
-        const double max_diff = cloth.timeStep();
+        auto         start_timestep   = std::chrono::system_clock::now();
+        const double max_diff         = cloth.timeStep();
+        auto         stop_timestep    = std::chrono::system_clock::now();
+        auto         elapsed_timestep = std::chrono::system_clock::now();
         cloth.terrCollision();
-        // params.class_threshold / 100
-        if ((max_diff != 0) && (max_diff < 0.005))
+        if (max_diff != 0.0 && max_diff < params.iter_tolerance)
         {
-            // early stop
+            std::cout << " - early stop at iteration " << i << " (max_diff: " << max_diff << ")" << std::endl;
             break;
         }
     }
+
+
     auto stop_simul    = std::chrono::system_clock::now();
     auto elapsed_simul = std::chrono::duration_cast<std::chrono::milliseconds>(stop_simul - start_simul);
     std::cout << "-> time cloth simulation " << elapsed_simul.count() << " ms" << std::endl;
@@ -98,12 +105,14 @@ Cloth CSF::do_cloth()
         std::cout << "-> time slope " << elapsed_slope.count() << " ms" << std::endl;
     }
 
+    if (!params.verbose) std::cout.rdbuf(old_buffer);
+
     return cloth;
 }
 
-void CSF::do_filtering(std::vector<int>& groundIndexes, std::vector<int>& offGroundIndexes, const bool exportCloth)
+void CSF::classifyGround(std::vector<int>& groundIndexes, std::vector<int>& offGroundIndexes, const bool exportCloth)
 {
-    auto cloth = do_cloth();
+    auto cloth = runClothSimulation();
     if (exportCloth) cloth.saveToFile();
     c2cdist c2c(params.class_threshold);
     c2c.calCloud2CloudDist(cloth, point_cloud, groundIndexes, offGroundIndexes);

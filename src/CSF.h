@@ -43,24 +43,25 @@
 #endif  // ifdef DLL_IMPLEMENT
 #endif  // ifdef _CSF_DLL_EXPORT_
 
-
 #ifdef _CSF_DLL_EXPORT_
 class DLL_API Params
 #else
 struct Params
 #endif
 {
-    Params() = default;
+    Params()  = default;
     ~Params() = default;
 
     // refer to the website:http://ramm.bnu.edu.cn/projects/CSF/ for th`e setting
     // of these paramters
-    bool   smooth_slope{true};
-    double time_step{0.65};
-    double class_threshold{0.5};
-    double cloth_resolution{1.0};
-    uint32_t    rigidness{3};
-    uint32_t    iterations{500};
+    double   time_step{0.65};
+    double   class_threshold{0.5};
+    double   cloth_resolution{1.0};
+    uint32_t rigidness{3};
+    uint32_t iterations{500};
+    double   iter_tolerance{0.005};
+    bool     smooth_slope{true};
+    bool     verbose{true};
 };
 
 #ifdef _CSF_DLL_EXPORT_
@@ -88,11 +89,11 @@ class CSF
     void savePoints(const std::vector<int>& grp, const std::string& path) const;
 
     // pointcloud and write the cloth particles coordinates
-    void do_filtering(
+    void classifyGround(
         std::vector<int>& groundIndexes, std::vector<int>& offGroundIndexes, const bool exportCloth = true);
 
     // Do the filtering and return the Cloth object
-    Cloth do_cloth();
+    Cloth runClothSimulation();
 
    public:
     Params params;
