@@ -24,42 +24,35 @@
  *  the next position is found through verlet integration*/
 void Particle::timeStep()
 {
-    if (movable)
-    {
-        const double temp_height = height;
-        height                   = height + (height - previous_height) * one_minus_damping + displacement;
-        previous_height          = temp_height;
-    }
+    if (!movable) return;
+
+    const double temp_height = height;
+    height                   = height + (height - previous_height) * one_minus_damping + displacement;
+    previous_height          = temp_height;
 }
 
 void Particle::satisfyConstraintSelf(uint32_t constraint_times)
 {
-    Particle* current_particle = this;
+    const double double_move_weight = (constraint_times > 14) ? 0.5 : doubleMove1[constraint_times];
+    const double single_move_weight = (constraint_times > 14) ? 1.0 : singleMove1[constraint_times];
 
-    for (size_t i = 0; i < neighborsList.size(); i++)
+    for (Particle* neighbor_particle : neighborsList)
     {
-        Particle*    neighbor_particle = neighborsList[i];
-        const double correction_factor = neighbor_particle->height - current_particle->height;
+        const double correction = neighbor_particle->height - height;
 
-        if (current_particle->isMovable() && neighbor_particle->isMovable())
+        if (isMovable() && neighbor_particle->isMovable())
         {
-            // Lets make it half that length, so that we can move BOTH p1 and p2.
-            const double correction_factor_half =
-                correction_factor * (constraint_times > 14 ? 0.5 : doubleMove1[constraint_times]);
-            current_particle->offsetPos(correction_factor_half);
-            neighbor_particle->offsetPos(-correction_factor_half);
+            const double delta = correction * double_move_weight;
+            offsetPos(delta);
+            neighbor_particle->offsetPos(-delta);
         }
-        else if (current_particle->isMovable() && !neighbor_particle->isMovable())
+        else if (isMovable())
         {
-            const double correction_factor_half =
-                correction_factor * (constraint_times > 14 ? 1 : singleMove1[constraint_times]);
-            current_particle->offsetPos(correction_factor_half);
+            offsetPos(correction * single_move_weight);
         }
-        else if (!current_particle->isMovable() && neighbor_particle->isMovable())
+        else if (neighbor_particle->isMovable())
         {
-            const double correction_factor_half =
-                correction_factor * (constraint_times > 14 ? 1 : singleMove1[constraint_times]);
-            neighbor_particle->offsetPos(-correction_factor_half);
+            neighbor_particle->offsetPos(-correction * single_move_weight);
         }
     }
 }

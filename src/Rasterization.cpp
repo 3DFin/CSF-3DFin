@@ -22,14 +22,14 @@
 
 #include <cstdint>
 #include <queue>
+
 // find height by scanning the nearest particles in the same row and column
 double Rasterization::findHeightValByScanline(Particle& p, const Cloth& cloth)
 {
     const uint32_t xpos = p.pos_x;
     const uint32_t ypos = p.pos_y;
-    uint32_t       cloth_width, cloth_height;
 
-    std::tie(cloth_width, cloth_height) = cloth.getGridSize();
+    auto [cloth_width, cloth_height] = cloth.getGridSize();
 
     for (uint32_t i = xpos + 1; i < cloth_width; i++)
     {
