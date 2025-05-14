@@ -80,7 +80,7 @@ Cloth::Cloth(
         {
             if (x < num_particles_width - 2) { makeConstraint(&getParticle(x, y), &getParticle(x + 2, y)); }
 
-            if (y < num_particles_height - 2) { makeConstraint(&getParticle(x, y), &getParticle(x + 2, y)); }
+            if (y < num_particles_height - 2) { makeConstraint(&getParticle(x, y), &getParticle(x, y + 2)); }
 
             if ((x < num_particles_width - 2) && (y < num_particles_height - 2))
             {
