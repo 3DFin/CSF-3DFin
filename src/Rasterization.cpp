@@ -29,7 +29,7 @@ double Rasterization::findHeightValByScanline(Particle& p, const Cloth& cloth)
     const uint32_t xpos = p.pos_x;
     const uint32_t ypos = p.pos_y;
 
-    auto [cloth_width, cloth_height] = cloth.getGridSize();
+    const auto [cloth_width, cloth_height] = cloth.getGridSize();
 
     for (uint32_t i = xpos + 1; i < cloth_width; i++)
     {
@@ -44,6 +44,7 @@ double Rasterization::findHeightValByScanline(Particle& p, const Cloth& cloth)
 
         if (crresHeight > MIN_INF) return crresHeight;
     }
+
     for (int32_t j = static_cast<int32_t>(ypos) - 1; j >= 0; --j)
     {
         const double crresHeight = cloth.getParticle(xpos, j).nearest_point_height;
@@ -66,19 +67,15 @@ double Rasterization::findHeightValByNeighbor(Particle& p)
     std::queue<Particle*>  nqueue;
     std::vector<Particle*> pbacklist;
 
-    // TODO RJ: this algorithm left the visited flag of some particles to "true"
-    // it should be reset to "false" after the algorithm is done because this
-    // flag is reused in the cloth simulation. This is a bug with minor
-    // consequences it seems to apply only to particles with id 0,1,
-    // particle_number-1 and particle_number-2
-
     // initialize the queue with the neighbors of the current particle
+    p.is_visited = true;
     for (auto neighbor : p.neighborsList)
     {
-        p.is_visited = true;
+        neighbor->is_visited = true;
         nqueue.push(neighbor);
     }
 
+    double res_value = MIN_INF;
     // iterate over a queue of neighboring particles
     while (!nqueue.empty())
     {
@@ -86,22 +83,12 @@ double Rasterization::findHeightValByNeighbor(Particle& p)
         nqueue.pop();
         pbacklist.push_back(pneighbor);
 
-        // if the current enqueued particle has a height defined, we return it
+        // if the current enqueued particle has a height defined we assign it
+        // to the res_value and break;
         if (pneighbor->nearest_point_height > MIN_INF)
         {
-            // reset the visited flag for all the particles in the backlist...
-            for (auto p : pbacklist) { p->is_visited = false; };
-
-            //... And reset the visited flag for all the particles in the queue
-            while (!nqueue.empty())
-            {
-                Particle* pp   = nqueue.front();
-                pp->is_visited = false;
-                nqueue.pop();
-            }
-
-            // return the height value
-            return pneighbor->nearest_point_height;
+            res_value = pneighbor->nearest_point_height;
+            break;
         }
         else
         {  // else we schedule to visit the neighbors of the current neighbor
@@ -116,17 +103,28 @@ double Rasterization::findHeightValByNeighbor(Particle& p)
         }
     }
 
-    return MIN_INF;
+    // reset the visited flag for all the particles in the backlist...
+    p.is_visited = false;
+    for (auto p : pbacklist) { p->is_visited = false; };
+    //... And reset the visited flag for all the particles in the queue
+    while (!nqueue.empty())
+    {
+        Particle* pp   = nqueue.front();
+        pp->is_visited = false;
+        nqueue.pop();
+    }
+
+    return res_value;
 }
 
 void Rasterization::Rasterize(Cloth& cloth, const csf::PointCloud& pc, std::vector<double>& heightVal)
 {
     for (const auto& point : pc)
     {
-        const double delta_x = point.x - cloth.origin_pos.f[0];
-        const double delta_z = point.z - cloth.origin_pos.f[2];
-        const int32_t    col     = int32_t(delta_x / cloth.step_x + 0.5);
-        const int32_t    row     = int32_t(delta_z / cloth.step_y + 0.5);
+        const double  delta_x = point.x - cloth.origin_pos.f[0];
+        const double  delta_z = point.z - cloth.origin_pos.f[2];
+        const int32_t col     = int32_t(delta_x / cloth.step_x + 0.5);
+        const int32_t row     = int32_t(delta_z / cloth.step_y + 0.5);
 
         if ((col >= 0) && (row >= 0))
         {
@@ -155,12 +153,5 @@ void Rasterization::Rasterize(Cloth& cloth, const csf::PointCloud& pc, std::vect
             // fill height value for cells without height value yet
             heightVal[i] = findHeightValByScanline(pcur, cloth);
         }
-    }
-
-    // TODO: RJ this was added to fix a minor consistency issue. it should be audited and removed.
-    for (uint32_t i = 0; i < cloth.getSize(); i++)
-    {
-        Particle& pcur  = cloth.getParticle(i);
-        pcur.is_visited = false;
     }
 }
