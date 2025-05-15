@@ -22,39 +22,37 @@
  *  a single step size (TIME_STEPSIZE) The method is called by
  *  Cloth.time_step() Given the equation "force = mass * acceleration"
  *  the next position is found through verlet integration*/
-void Particle::timeStep() {
-  if (movable) {
+void Particle::timeStep()
+{
+    if (!movable) return;
+
     const double temp_height = height;
-    height =
-        height + (height - previous_height) * one_minus_damping + displacement;
-    previous_height = temp_height;
-  }
+    height                   = height + (height - previous_height) * one_minus_damping + displacement;
+    previous_height          = temp_height;
 }
 
-void Particle::satisfyConstraintSelf(int constraintTimes) {
-  Particle *p1 = this;
+void Particle::satisfyConstraintSelf(uint32_t constraint_times)
+{
+    const double double_move_weight = (constraint_times > 14) ? 0.5 : doubleMove1[constraint_times];
+    const double single_move_weight = (constraint_times > 14) ? 1.0 : singleMove1[constraint_times];
 
-  for (std::size_t i = 0; i < neighborsList.size(); i++) {
-    Particle *p2 = neighborsList[i];
-    const double correction_factor = p2->height - p1->height;
+    for (Particle* neighbor_particle : neighborsList)
+    {
+        const double correction = neighbor_particle->height - height;
 
-    if (p1->isMovable() && p2->isMovable()) {
-      // Lets make it half that length, so that we can move BOTH p1 and p2.
-      const double correction_factor_half =
-          correction_factor *
-          (constraintTimes > 14 ? 0.5 : doubleMove1[constraintTimes]);
-      p1->offsetPos(correction_factor_half);
-      p2->offsetPos(-correction_factor_half);
-    } else if (p1->isMovable() && !p2->isMovable()) {
-      const double correction_factor_half =
-          correction_factor *
-          (constraintTimes > 14 ? 1 : singleMove1[constraintTimes]);
-      p1->offsetPos(correction_factor_half);
-    } else if (!p1->isMovable() && p2->isMovable()) {
-      const double correction_factor_half =
-          correction_factor *
-          (constraintTimes > 14 ? 1 : singleMove1[constraintTimes]);
-      p2->offsetPos(-correction_factor_half);
+        if (isMovable() && neighbor_particle->isMovable())
+        {
+            const double delta = correction * double_move_weight;
+            offsetPos(delta);
+            neighbor_particle->offsetPos(-delta);
+        }
+        else if (isMovable())
+        {
+            offsetPos(correction * single_move_weight);
+        }
+        else if (neighbor_particle->isMovable())
+        {
+            neighbor_particle->offsetPos(-correction * single_move_weight);
+        }
     }
-  }
 }

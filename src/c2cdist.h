@@ -1,3 +1,4 @@
+#pragma once
 // ======================================================================================
 // Copyright 2017 State Key Laboratory of Remote Sensing Science,
 // Institute of Remote Sensing Science and Engineering, Beijing Normal
@@ -16,22 +17,21 @@
 // limitations under the License.
 // ======================================================================================
 
-#pragma once
 
 #include "Cloth.h"
-#include "point_cloud.h"
+#include "PointCloud.h"
 
-class c2cdist {
-public:
-  c2cdist(double threshold) : class_treshold(threshold) {}
+class c2cdist
+{
+   public:
+    c2cdist(double threshold) : class_threshold(threshold) {}
 
-  ~c2cdist() {}
+    ~c2cdist() = default;
 
-public:
-  void calCloud2CloudDist(Cloth &cloth, csf::PointCloud &pc,
-                          std::vector<int> &groundIndexes,
-                          std::vector<int> &offGroundIndexes);
+   public:
+    void calCloud2CloudDist(
+        const Cloth& cloth, const csf::PointCloud& pc, std::vector<int>& groundIndexes, std::vector<int>& offGroundIndexes);
 
-private:
-  double class_treshold; //
+   private:
+    double class_threshold;
 };

@@ -9,82 +9,42 @@ W. Zhang, J. Qi*, P. Wan, H. Wang, D. Xie, X. Wang, and G. Yan, “An Easy-to-Us
 
 **This is a modified version of the original Code for 3DFin purposes**
 
-For now this is only intended to be used inside [3DFin](https://github.com/3DFin/3Dfin)/[dendromatics](https://github.com/3DFin/dendromatics). 
+For now this is only intended to be used inside [3DFin](https://github.com/3DFin/3Dfin)/[dendromatics](https://github.com/3DFin/dendromatics).
 But this repository also serve as a playground to bootstrap a planned full rewrite of CSF.
 
 List of changes:
 
 - Better handling of numpy arrays in the python bindings (avoid expensive copies)
-- Bug fixes and improvement (mostly backport from CloudCompare version of CSF and original ones)
+- Port to nanobind (instead of SWIG)
+- Bug fixes and improvement (mostly backport from CloudCompare version of CSF but also original ones)
 - Better (but yet to be improved) documentation and code structure.
+- Removed ascii handling in favor of pure numpy interface
 
-**New feature has been implemented:**
-
-Now, We has wrapped a Python interface for CSF with swig. It is simpler to use now. This new feature can make CSF easier to be embeded into a large project. For example, it can work with Laspy (https://github.com/laspy/laspy). What you do is just read a point cloud into a python 2D list, and pass it to CSF.
-The following example shows how to use it with laspy.
+### How to use CSF in Python
 ```python
-# coding: utf-8
+pip install csf-3dfin
+```
+
+#### Python examples
+
+```python
 import laspy
-import CSF
-import numpy as np
+from CSF_3DFin import CSF
 
-inFile = laspy.read(r"in.las") # read a las file
-points = inFile.points
-xyz = np.vstack((inFile.x, inFile.y, inFile.z)).transpose() # extract x, y, z and put into a list
-
-csf = CSF.CSF()
+las_file = laspy.read(r"sample.las") # read a las file
+csf = CSF()
 
 # prameter settings
-csf.params.bSloopSmooth = False
+csf.params.smooth_slope = False
 csf.params.cloth_resolution = 0.5
 # more details about parameter: http://ramm.bnu.edu.cn/projects/CSF/download/
 
-csf.setPointCloud(xyz)
-ground = CSF.VecInt()  # a list to indicate the index of ground points after calculation
-non_ground = CSF.VecInt() # a list to indicate the index of non-ground points after calculation
-csf.do_filtering(ground, non_ground) # do actual filtering.
+csf.set_point_cloud(las_file.xyz)
+ground, _ = csf.classify_ground() # do actual filtering.
 
-outFile = laspy.LasData(inFile.header)
-outFile.points = points[np.array(ground)] # extract ground points, and save it to a las file.
+out_file = laspy.LasData(las_file.header)
+out_file.points = las_file.points[ground] # extract ground points, and save it to a las file.
 out_file.write(r"out.las")
-```
-
-**Reading data from txt file:**
-
-If the lidar data is stored in txt file (x y z for each line), it can also be imported directly.
-
-```python
-import CSF
-
-csf = CSF.CSF()
-csf.readPointsFromFile('samp52.txt')
-
-csf.params.bSloopSmooth = False
-csf.params.cloth_resolution = 0.5
-
-ground = CSF.VecInt()  # a list to indicate the index of ground points after calculation
-non_ground = CSF.VecInt() # a list to indicate the index of non-ground points after calculation
-csf.do_filtering(ground, non_ground) # do actual filtering.
-csf.savePoints(ground,"ground.txt")
-```
-
-### How to use CSF in Python
-Thanks to [@rjanvier](https://github.com/rjanvier)'s contribution. Now we can install CSF from pip as:
-```python
-pip install cloth-simulation-filter
-```
-
-### How to use CSF in Matlab
-see more details from file `demo_mex.m` under matlab folder.
-
-### How to use CSF in R
-
-Thanks to the nice work of @Jean-Romain, through the collaboration, the CSF has been made as a R package, the details can be found in the [RCSF repository](https://github.com/Jean-Romain/RCSF). This package can be used easily with the [lidR package](https://github.com/Jean-Romain/lidR):
-
-```r
-library(lidR)
-las  <- readLAS("file.las")
-las  <- lasground(las, csf())
 ```
 
 ### How to use CSF in C++
@@ -98,7 +58,6 @@ cmake ..
 make
 sudo make install
 ```
-or if you want to build the library and the demo executable `csfdemo`
 
 ```bash
 mkdir build #or other name
@@ -106,23 +65,7 @@ cd build
 cmake -DBUILD_DEMO=ON ..
 make
 sudo make install
-
 ```
 
-#### Windows
-You can use CMake GUI to generate visual studio solution file.
-
-### Binary Version
-For binary release version, it can be downloaded at: http://ramm.bnu.edu.cn/projects/CSF/download/
-
-Note: This code has been changed a lot since the publication of the corresponding paper. A lot of optimizations have been made. We are still working on it, and wish it could be better.
-
-### Cloudcompare Pulgin
-At last, if you are interested in Cloudcompare, there is a good news. our method has been implemented as a Cloudcompare plugin, you can refer to : https://github.com/cloudcompare/trunk
-
-### Related project
-A tool named `CSFTools` has been recently released, it is based on CSF, and provides dem/chm generation, normalization. Please refer to: https://github.com/jianboqi/CSFTools
-
 ### License
-CSF is maintained and developed by Jianbo QI. It is now released under Apache 2.0.
-
+CSF-3DFin is developed by Jianbo QI and maintained by 3DFin team. It is released under Apache 2.0.

@@ -1,4 +1,5 @@
-﻿// ======================================================================================
+﻿#pragma once
+// ======================================================================================
 // Copyright 2017 State Key Laboratory of Remote Sensing Science,
 // Institute of Remote Sensing Science and Engineering, Beijing Normal
 // University
@@ -27,89 +28,76 @@
 // #######################################################################################
 
 // cloth simulation filter for airborne lidar filtering
-#pragma once
 
-#include "Cloth.h"
-#include "point_cloud.h"
 #include <string>
 #include <vector>
 
-struct Params {
-  // refer to the website:http://ramm.bnu.edu.cn/projects/CSF/ for the setting
-  // of these paramters
-  bool bSloopSmooth;
-  double time_step;
-  double class_threshold;
-  double cloth_resolution;
-  int rigidness;
-  int interations;
-};
+#include "Cloth.h"
+#include "PointCloud.h"
 
 #ifdef _CSF_DLL_EXPORT_
 #ifdef DLL_IMPLEMENT
 #define DLL_API __declspec(dllexport)
-#else // ifdef DLL_IMPLEMENT
+#else  // ifdef DLL_IMPLEMENT
 #define DLL_API __declspec(dllimport)
-#endif // ifdef DLL_IMPLEMENT
-#endif // ifdef _CSF_DLL_EXPORT_
+#endif  // ifdef DLL_IMPLEMENT
+#endif  // ifdef _CSF_DLL_EXPORT_
+
+#ifdef _CSF_DLL_EXPORT_
+class DLL_API Params
+#else
+struct Params
+#endif
+{
+    Params()  = default;
+    ~Params() = default;
+
+    // refer to the website:http://ramm.bnu.edu.cn/projects/CSF/ for th`e setting
+    // of these paramters
+    double   time_step{0.65};
+    double   class_threshold{0.5};
+    double   cloth_resolution{1.0};
+    uint32_t rigidness{3};
+    uint32_t iterations{500};
+    double   iter_tolerance{0.005};
+    bool     smooth_slope{true};
+    bool     verbose{true};
+};
 
 #ifdef _CSF_DLL_EXPORT_
 class DLL_API CSF
 #else  // ifdef _CSF_DLL_EXPORT_
 class CSF
-#endif // ifdef _CSF_DLL_EXPORT_
+#endif  // ifdef _CSF_DLL_EXPORT_
 {
-public:
-  CSF();
-  ~CSF();
+   public:
+    CSF()  = default;
+    ~CSF() = default;
 
-  // set pointcloud from vector
-  void setPointCloud(std::vector<csf::Point> points);
+    // PointCloud set pointcloud
+    void setPointCloud(const csf::PointCloud& pc);
 
-  // set point cloud from a two-dimentional array. it defines a N*3 point cloud
-  // by the given rows. it is the method used to set point cloud from python
-  // (numpy array)
-  void setPointCloud(double *points, int rows, int cols);
+    // read pointcloud from txt file: (X Y Z) for each line
+    void readPointsFromFile(const std::string& filename);
 
-  // set point cloud from a one-dimentional array. it defines a N*3 point cloud
-  // by the given rows. it is the method used to set point cloud from matlab
-  void setPointCloud(double *points, int rows);
+    csf::PointCloud& getPointCloud() { return point_cloud; }
 
-  // read pointcloud from txt file: (X Y Z) for each line
-  void readPointsFromFile(std::string filename);
+    const csf::PointCloud& getPointCloud() const { return point_cloud; }
 
-  inline csf::PointCloud &getPointCloud() { return point_cloud; }
+    // save points to file
+    // The results are index of ground points in the original point cloud
+    void savePoints(const std::vector<int>& grp, const std::string& path) const;
 
-  inline const csf::PointCloud &getPointCloud() const { return point_cloud; }
+    // pointcloud and write the cloth particles coordinates
+    void classifyGround(
+        std::vector<int>& groundIndexes, std::vector<int>& offGroundIndexes, const bool exportCloth = true);
 
-  // save points to file
-  void savePoints(std::vector<int> grp, std::string path);
+    // Do the filtering and return the Cloth object
+    Cloth runClothSimulation();
 
-  // get size of pointcloud
-  std::size_t size() { return point_cloud.size(); }
+   public:
+    Params params;
 
-  // PointCloud set pointcloud
-  void setPointCloud(csf::PointCloud &pc);
-
-  // The results are index of ground points in the original
-  // pointcloud and write the cloth particles coordinates
-  void do_filtering(std::vector<int> &groundIndexes,
-                    std::vector<int> &offGroundIndexes,
-                    bool exportCloth = true);
-
-  std::vector<double> do_cloth_export();
-
-private:
-  // Do the filtering and return the Cloth object
-  Cloth do_cloth();
-
-#ifdef _CSF_DLL_EXPORT_
-  class __declspec(dllexport) csf::PointCloud point_cloud;
-#else  // ifdef _CSF_DLL_EXPORT_
-  csf::PointCloud point_cloud;
-#endif // ifdef _CSF_DLL_EXPORT_
-
-public:
-  Params params;
-  int index;
+   private:
+    csf::PointCloud point_cloud;
 };

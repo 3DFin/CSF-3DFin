@@ -1,3 +1,4 @@
+#pragma once
 // ======================================================================================
 // Copyright 2017 State Key Laboratory of Remote Sensing Science,
 // Institute of Remote Sensing Science and Engineering, Beijing Normal
@@ -15,25 +16,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // ======================================================================================
-
-#pragma once
-
 #include "Cloth.h"
-#include "point_cloud.h"
+#include "PointCloud.h"
 
-#define SQUARE_DIST(x1, y1, x2, y2)                                            \
-  (((x1) - (x2)) * ((x1) - (x2)) + ((y1) - (y2)) * ((y1) - (y2)))
+class Rasterization
+{
+   public:
+    Rasterization() {}
+    ~Rasterization() {}
 
-class Rasterization {
-public:
-  Rasterization() {}
-  ~Rasterization() {}
+    // for a cloth particle, if no corresponding lidar point are found.
+    // the heightval are set as its neighbor's
+    double static findHeightValByNeighbor(Particle& p);
+    double static findHeightValByScanline(Particle& p, const Cloth& cloth);
 
-  // for a cloth particle, if no corresponding lidar point are found.
-  // the heightval are set as its neighbor's
-  double static findHeightValByNeighbor(Particle *p);
-  double static findHeightValByScanline(Particle *p, Cloth &cloth);
+    void static Rasterize(Cloth& cloth, const csf::PointCloud& pc, std::vector<double>& heightVal);
 
-  void static Rasterize(Cloth &cloth, const csf::PointCloud &pc,
-                        std::vector<double> &heightVal);
+   private:
+    static inline double square_dist(double x1, double y1, double x2, double y2)
+    {
+        return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+    }
 };
