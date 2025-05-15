@@ -17,7 +17,7 @@
 // limitations under the License.
 // ======================================================================================
 #include "Cloth.h"
-#include "point_cloud.h"
+#include "PointCloud.h"
 
 class Rasterization
 {

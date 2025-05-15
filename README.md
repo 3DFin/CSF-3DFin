@@ -16,7 +16,7 @@ List of changes:
 
 - Better handling of numpy arrays in the python bindings (avoid expensive copies)
 - Port to nanobind (instead of SWIG)
-- Bug fixes and improvement (mostly backport from CloudCompare version of CSF and original ones)
+- Bug fixes and improvement (mostly backport from CloudCompare version of CSF but also original ones)
 - Better (but yet to be improved) documentation and code structure.
 - Removed ascii handling in favor of pure numpy interface
 
@@ -30,7 +30,6 @@ pip install csf-3dfin
 ```python
 import laspy
 from CSF_3DFin import CSF
-import numpy as np
 
 las_file = laspy.read(r"sample.las") # read a las file
 csf = CSF()
@@ -41,10 +40,10 @@ csf.params.cloth_resolution = 0.5
 # more details about parameter: http://ramm.bnu.edu.cn/projects/CSF/download/
 
 csf.set_point_cloud(las_file.xyz)
-ground, _ = csf.do_filtering() # do actual filtering.
+ground, _ = csf.classify_ground() # do actual filtering.
 
 out_file = laspy.LasData(las_file.header)
-out_file.points = las_file.points[np.array(ground)] # extract ground points, and save it to a las file.
+out_file.points = las_file.points[ground] # extract ground points, and save it to a las file.
 out_file.write(r"out.las")
 ```
 
@@ -59,7 +58,6 @@ cmake ..
 make
 sudo make install
 ```
-or if you want to build the library and the demo executable `csfdemo`
 
 ```bash
 mkdir build #or other name
@@ -70,4 +68,4 @@ sudo make install
 ```
 
 ### License
-CSF is maintained and developed by Jianbo QI. It is now released under Apache 2.0.
+CSF-3DFin is developed by Jianbo QI and maintained by 3DFin team. It is released under Apache 2.0.

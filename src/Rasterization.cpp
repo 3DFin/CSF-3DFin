@@ -18,8 +18,6 @@
 
 #include "Rasterization.h"
 
-#include <sys/types.h>
-
 #include <cstdint>
 #include <queue>
 

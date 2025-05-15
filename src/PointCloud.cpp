@@ -16,7 +16,7 @@
 // limitations under the License.
 // ======================================================================================
 
-#include "point_cloud.h"
+#include "PointCloud.h"
 
 void csf::PointCloud::computeBoundingBox(Point& bbMin, Point& bbMax) const
 {
@@ -26,11 +26,11 @@ void csf::PointCloud::computeBoundingBox(Point& bbMin, Point& bbMax) const
         return;
     }
 
-    bbMin = bbMax = at(0);
+    bbMin = bbMax = (*this)[0];
 
     for (size_t i = 1; i < size(); i++)
     {  // zwm
-        const csf::Point& P = at(i);
+        const csf::Point& P = (*this)[i];
 
         for (size_t d = 0; d < 3; ++d)
         {

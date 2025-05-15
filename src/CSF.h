@@ -33,7 +33,7 @@
 #include <vector>
 
 #include "Cloth.h"
-#include "point_cloud.h"
+#include "PointCloud.h"
 
 #ifdef _CSF_DLL_EXPORT_
 #ifdef DLL_IMPLEMENT

@@ -18,6 +18,6 @@
 // ======================================================================================
 #include <string>
 
-#include "point_cloud.h"
+#include "PointCloud.h"
 
 void read_xyz(std::string fname, csf::PointCloud& pointcloud);

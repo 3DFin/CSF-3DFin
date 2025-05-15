@@ -4,7 +4,7 @@ set(CSF_SOURCES
     Constraint.cpp
     CSF.cpp
     Particle.cpp
-    point_cloud.cpp
+    PointCloud.cpp
     Rasterization.cpp
     XYZReader.cpp
 )
@@ -15,14 +15,14 @@ set(CSF_HEADERS
     Constraint.h
     CSF.h
     Particle.h
-    point_cloud.h
+    PointCloud.h
     Rasterization.h
     Vec3.h
     XYZReader.h
 )
 
 add_library(CSF STATIC ${CSF_SOURCES} ${CSF_HEADERS})
-target_include_directories(CSF PUBLIC 
+target_include_directories(CSF PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<INSTALL_INTERFACE:include/csf>)
 

@@ -19,7 +19,7 @@
 
 
 #include "Cloth.h"
-#include "point_cloud.h"
+#include "PointCloud.h"
 
 class c2cdist
 {
