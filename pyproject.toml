@@ -16,8 +16,10 @@ keywords = ["LiDAR", "DTM", "DSM", "Classification"]
 description = "CSF: Ground Filtering based on Cloth Simulation"
 requires-python = ">=3.10,<3.14"
 dependencies = [
+    "fcpw>=1.2.0",
     "laspy>=2.5.4",
-    "numpy>1.23",   #NEP 29
+    "numpy>1.23", #NEP 29
+    "scipy>=1.15.3",
 ]
 
 [project.urls]
