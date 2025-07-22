@@ -18,8 +18,21 @@
 
 #include "Cloth.h"
 
-#include <fstream>
+#include <cstddef>
+
+#include "Cloth.h"
+#include "Particle.h"
+
+#ifdef CSF_USE_TASKFLOW
+#include <taskflow/algorithm/for_each.hpp>
+#include <taskflow/core/executor.hpp>
+#include <taskflow/taskflow.hpp>
+#elif defined(CSF_USE_OPENMP)
+#include <omp.h>
+#endif
+
 #include <algorithm>
+#include <fstream>
 #include <iomanip>
 #include <queue>
 
@@ -94,10 +107,18 @@ Cloth::Cloth(
 double Cloth::timeStep()
 {
     int particleCount = static_cast<int>(particles.size());
+
+#ifdef CSF_USE_TASKFLOW
+    tf::Executor executor;
+    tf::Taskflow taskflow;
+    taskflow.for_each(std::begin(particles), std::end(particles), [](Particle& particle) { particle.timeStep(); });
+    executor.run(taskflow).wait();
+#else  // fallback to OpenMP or not //
 #ifdef CSF_USE_OPENMP
 #pragma omp parallel for
 #endif
-    for (int i = 0; i < particleCount; i++) { particles[i].timeStep(); }
+    for (int i = 0; i < particleCount; ++i) { particles[i].timeStep(); }
+#endif
 
     std::for_each(
         std::begin(particles), std::end(particles),
@@ -110,25 +131,33 @@ double Cloth::timeStep()
     return max_diff;
 }
 
+void Cloth::blockCollision(const size_t particle_id)
+{
+    Particle& curr_particle = particles[particle_id];
+
+    if (!curr_particle.isMovable()) { return; };
+
+    // if the particle height is inferior to the height value
+    // defined by the rasterization it's considered to have crossed
+    // the surface. the particle is made unmovable its height is forced
+    // to the value computed by the rasterization
+    if (curr_particle.height < height_values[particle_id]) { curr_particle.makeUnmovable(height_values[particle_id]); }
+}
+
 void Cloth::terrCollision()
 {
-    const int particleCount = static_cast<int>(particles.size());
-
-#ifdef CSF_USE_OPENMP
+#ifdef CSF_USE_TASKFLOW
+    tf::Executor executor;
+    tf::Taskflow tf;
+    tf.for_each_index(0, particles.size(), 1, [this](auto particle_id){blockCollision(particle_id);});
+    executor.run(tf).wait();
+#else
+#ifdef defined(CSF_USE_OPENMP)
 #pragma omp parallel for
 #endif
-    for (int i = 0; i < particleCount; i++)
-    {
-        Particle& curr_particle = particles[i];
-
-        if (!curr_particle.isMovable()) { continue; };
-
-        // if the particle height is inferior to the height value
-        // defined by the rasterization it's considered to have crossed
-        // the surface. the particle is made unmovable its height is forced
-        // to the value computed by the rasterization
-        if (curr_particle.height < height_values[i]) { curr_particle.makeUnmovable(height_values[i]); }
-    }
+    const int particle_count = static_cast<int>(particles.size());
+    for (int i = 0; i < particle_count; i++) { blockCollision(i); };
+#endif
 }
 
 void Cloth::movableFilter()
@@ -253,11 +282,11 @@ std::vector<uint32_t> Cloth::findUnmovablePoint(const std::vector<XY>& connected
 
     for (size_t i = 0; i < connected.size(); i++)
     {
-        const uint32_t x     = connected[i].x;
-        const uint32_t y     = connected[i].y;
-        const double height_value = height_values[y * num_particles_width + x];
+        const uint32_t x            = connected[i].x;
+        const uint32_t y            = connected[i].y;
+        const double   height_value = height_values[y * num_particles_width + x];
 
-        Particle&      ptc   = getParticle(x, y);
+        Particle& ptc = getParticle(x, y);
 
         // TODO RJ: this was pulled off the if(std::fabs(...)) test
         //  of each neighbor test. Verify if the test is correct in the paper

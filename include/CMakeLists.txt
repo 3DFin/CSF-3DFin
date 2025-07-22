@@ -1,8 +1,8 @@
-set(CSF_HEADERS
+set(CSF_API_HEADERS
+    CSF.h
     c2cdist.h
     Cloth.h
     Constraint.h
-    CSF.h
     Particle.h
     PointCloud.h
     Rasterization.h

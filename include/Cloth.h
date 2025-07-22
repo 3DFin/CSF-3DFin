@@ -37,18 +37,14 @@
  */
 // using discrete steps (drop and pull) to approximate the physical process
 
-
 #ifdef _WIN32
 #define NOMINMAX
 #include <windows.h>
 #endif  // ifdef _WIN32
 
-#include <vector>
-#ifdef CSF_USE_OPENMP
-#include <omp.h>
-#endif
 #include <cstdint>
 #include <string>
+#include <vector>
 
 #include "Particle.h"
 #include "Vec3.h"
@@ -116,6 +112,9 @@ class Cloth
     }
 
     std::vector<double>& getHeightvals() { return height_values; }
+
+   private:
+    void blockCollision(const size_t particle_id);
 
    public:
     const Vec3          origin_pos;

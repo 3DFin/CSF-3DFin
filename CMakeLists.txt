@@ -4,11 +4,6 @@ project(CSF VERSION 2.0.0 LANGUAGES CXX)
 option(COMPILE_PYTHON_MODULE "Compile Python module" OFF)
 option(BUILD_DEMO "Build csfdemo executable" OFF)
 
-find_package(OpenMP)
-if(OpenMP_CXX_FOUND)
-    add_compile_definitions("CSF_USE_OPENMP")
-endif()
-
 add_subdirectory(include)
 add_subdirectory(src)
 
@@ -32,8 +27,9 @@ if(COMPILE_PYTHON_MODULE)
 
     # Detect the installed nanobind package and import it into CMake
     execute_process(
-  COMMAND "${Python_EXECUTABLE}" -m nanobind --cmake_dir
-  OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_VARIABLE nanobind_ROOT)
+        COMMAND "${Python_EXECUTABLE}" -m nanobind --cmake_dir
+        OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_VARIABLE nanobind_ROOT)
+
     find_package(nanobind CONFIG REQUIRED)
 
     nanobind_add_module(
