@@ -1,0 +1,8 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/CSFTargets.cmake")
+
+# path from lib/cmake/CSF to root of the package
+get_filename_component(PACKAGE_PREFIX_DIR "${CMAKE_CURRENT_LIST_DIR}/../../.." ABSOLUTE)
+
+set(CSF_INCLUDE_DIRS "${PACKAGE_PREFIX_DIR}/include/csf")

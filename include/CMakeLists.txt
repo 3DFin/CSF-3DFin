@@ -1,0 +1,11 @@
+set(CSF_HEADERS
+    c2cdist.h
+    Cloth.h
+    Constraint.h
+    CSF.h
+    Particle.h
+    PointCloud.h
+    Rasterization.h
+    Vec3.h
+    XYZReader.h
+)
