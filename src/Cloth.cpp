@@ -38,10 +38,10 @@
 
 Cloth::Cloth(
     const Vec3& _origin_pos, uint32_t _num_particles_width, uint32_t _num_particles_height, double _step_x,
-    double _step_y, double _smoothThreshold, double _heightThreshold, uint32_t rigidness, double time_step)
+    double _step_y, double _smooth_threshold, double _height_threshold, uint32_t rigidness, double time_step)
     : constraint_iterations(rigidness),
-      smoothThreshold(_smoothThreshold),
-      heightThreshold(_heightThreshold),
+      smooth_threshold(_smooth_threshold),
+      height_threshold(_height_threshold),
       origin_pos(_origin_pos),
       step_x(_step_x),
       step_y(_step_y),
@@ -291,7 +291,7 @@ std::vector<uint32_t> Cloth::findUnmovablePoint(const std::vector<XY>& connected
         // TODO RJ: this was pulled off the if(std::fabs(...)) test
         //  of each neighbor test. Verify if the test is correct in the paper
         //  maybe it's nn.heigh - height_values[index]
-        if (ptc.height - height_value < heightThreshold) { continue; };
+        if (ptc.height - height_value < height_threshold) { continue; };
 
         if (x > 0)
         {
@@ -301,7 +301,7 @@ std::vector<uint32_t> Cloth::findUnmovablePoint(const std::vector<XY>& connected
             {
                 const uint32_t index_ref = y * num_particles_width + x - 1;
 
-                if (std::fabs(height_value - height_values[index_ref]) < smoothThreshold)
+                if (std::fabs(height_value - height_values[index_ref]) < smooth_threshold)
                 {
                     ptc_x.offsetPos(height_value - ptc.height);
                     ptc.makeUnmovable();
@@ -319,7 +319,7 @@ std::vector<uint32_t> Cloth::findUnmovablePoint(const std::vector<XY>& connected
             {
                 const uint32_t index_ref = y * num_particles_width + x + 1;
 
-                if (std::fabs(height_value - height_values[index_ref]) < smoothThreshold)
+                if (std::fabs(height_value - height_values[index_ref]) < smooth_threshold)
                 {
                     ptc_x.offsetPos(height_value - ptc.height);
                     ptc.makeUnmovable();
@@ -337,7 +337,7 @@ std::vector<uint32_t> Cloth::findUnmovablePoint(const std::vector<XY>& connected
             {
                 const uint32_t index_ref = (y - 1) * num_particles_width + x;
 
-                if (std::fabs(height_value - height_values[index_ref]) < smoothThreshold)
+                if (std::fabs(height_value - height_values[index_ref]) < smooth_threshold)
                 {
                     ptc_y.offsetPos(height_value - ptc.height);
                     ptc.makeUnmovable();
@@ -355,7 +355,7 @@ std::vector<uint32_t> Cloth::findUnmovablePoint(const std::vector<XY>& connected
             {
                 const uint32_t index_ref = (y + 1) * num_particles_width + x;
 
-                if (std::fabs(height_value - height_values[index_ref]) < smoothThreshold)
+                if (std::fabs(height_value - height_values[index_ref]) < smooth_threshold)
                 {
                     ptc_y.offsetPos(height_value - ptc.height);
                     ptc.makeUnmovable();
@@ -391,8 +391,8 @@ void Cloth::handle_slope_connected(
 
             Particle& neighbor_particle = particles[index_neighbor];
 
-            if ((std::fabs(height_values[index_center] - height_values[index_neighbor]) < smoothThreshold) &&
-                (std::fabs(particles[index_neighbor].height - height_values[index_neighbor]) < heightThreshold))
+            if ((std::fabs(height_values[index_center] - height_values[index_neighbor]) < smooth_threshold) &&
+                (std::fabs(particles[index_neighbor].height - height_values[index_neighbor]) < height_threshold))
             {
                 neighbor_particle.offsetPos(height_values[index_neighbor] - particles[index_neighbor].height);
                 neighbor_particle.makeUnmovable();

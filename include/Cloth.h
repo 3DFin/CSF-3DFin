@@ -65,7 +65,7 @@ class Cloth
      * particles and constraints */
     Cloth(
         const Vec3& origin_pos, uint32_t num_particles_width, uint32_t num_particles_height, double step_x,
-        double step_y, double smoothThreshold, double heightThreshold, uint32_t rigidness, double time_step);
+        double step_y, double _smooth_threshold, double _height_threshold, uint32_t rigidness, double time_step);
 
     ~Cloth() = default;
 
@@ -131,8 +131,8 @@ class Cloth
     const uint32_t num_particles_width;  // number of particles in width direction
     const uint32_t num_particles_height;  // number of particles in height direction
 
-    const double smoothThreshold;
-    const double heightThreshold;
+    const double smooth_threshold;
+    const double height_threshold;
 
     std::vector<Particle> particles;  // all particles that are part of this cloth
 };
