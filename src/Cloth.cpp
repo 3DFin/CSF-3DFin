@@ -152,10 +152,10 @@ void Cloth::terrCollision()
     tf.for_each_index(0, particles.size(), 1, [this](auto particle_id){blockCollision(particle_id);});
     executor.run(tf).wait();
 #else
+const int particle_count = static_cast<int>(particles.size());
 #ifdef CSF_USE_OPENMP
 #pragma omp parallel for
 #endif
-    const int particle_count = static_cast<int>(particles.size());
     for (int i = 0; i < particle_count; i++) { blockCollision(i); };
 #endif
 }
