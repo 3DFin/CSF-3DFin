@@ -72,7 +72,8 @@ class Particle
         tmp_dist             = MAX_INF;
         height               = initial_pos.f[1];
         nearest_point_height = MIN_INF;
-        previous_height      = initial_pos.f[1];
+
+        previous_height = initial_pos.f[1];
     }
 
     ~Particle() = default;
@@ -117,10 +118,11 @@ class Particle
     // on the grid
     const Vec3 initial_pos;
 
-    const uint32_t pos_x;  // position in the cloth grid
-    const uint32_t pos_y;
+    const uint32_t pos_x{0};  // position in the cloth grid
+    const uint32_t pos_y{0};
 
-    bool   is_visited;
+    bool   is_visited{false};
+    bool   is_initial{false};
     double tmp_dist;
 
     // position in a connected component

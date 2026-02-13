@@ -134,6 +134,7 @@ void Rasterization::Rasterize(Cloth& cloth, const csf::PointCloud& pc, std::vect
             if (point_to_particle_dist < particle.tmp_dist)
             {
                 particle.tmp_dist             = point_to_particle_dist;
+                particle.is_initial           = true;
                 particle.nearest_point_height = point.y;
             }
         }
@@ -142,10 +143,9 @@ void Rasterization::Rasterize(Cloth& cloth, const csf::PointCloud& pc, std::vect
     heightVal.resize(cloth.getSize());
     for (uint32_t i = 0; i < cloth.getSize(); i++)
     {
-        Particle&    pcur           = cloth.getParticle(i);
-        const double nearest_height = pcur.nearest_point_height;
+        Particle& pcur = cloth.getParticle(i);
 
-        if (nearest_height > MIN_INF) { heightVal[i] = nearest_height; }
+        if (pcur.is_initial) { heightVal[i] = pcur.nearest_point_height; }
         else
         {
             // fill height value for cells without height value yet

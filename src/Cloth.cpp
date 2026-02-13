@@ -62,7 +62,7 @@ Cloth::Cloth(
         for (uint32_t j = 0; j < num_particles_width; j++)
         {
             // insert particle in column i at j'th row
-            auto position = Vec3(origin_pos.f[0] + j * step_x, origin_pos.f[1], origin_pos.f[2] + i * step_y);
+            const auto position = Vec3(origin_pos.f[0] + j * step_x, origin_pos.f[1], origin_pos.f[2] + i * step_y);
             particles.emplace_back(std::move(position), displacement, j, i);
         }
     }
@@ -149,10 +149,10 @@ void Cloth::terrCollision()
 #ifdef CSF_USE_TASKFLOW
     tf::Executor executor;
     tf::Taskflow tf;
-    tf.for_each_index(0, particles.size(), 1, [this](auto particle_id){blockCollision(particle_id);});
+    tf.for_each_index(0, particles.size(), 1, [this](auto particle_id) { blockCollision(particle_id); });
     executor.run(tf).wait();
 #else
-const int particle_count = static_cast<int>(particles.size());
+    const int particle_count = static_cast<int>(particles.size());
 #ifdef CSF_USE_OPENMP
 #pragma omp parallel for
 #endif
@@ -205,7 +205,10 @@ void Cloth::movableFilter()
                                 neighbor.push_back(sum);
                                 ptc_left.c_pos = sum++;
                             }
-                            else { neighbor.push_back(ptc_left.c_pos); }
+                            else
+                            {
+                                neighbor.push_back(ptc_left.c_pos);
+                            }
                         }
                     }
 
@@ -223,7 +226,10 @@ void Cloth::movableFilter()
                                 neighbor.push_back(sum);
                                 ptc_right.c_pos = sum++;
                             }
-                            else { neighbor.push_back(ptc_right.c_pos); }
+                            else
+                            {
+                                neighbor.push_back(ptc_right.c_pos);
+                            }
                         }
                     }
 
@@ -241,7 +247,10 @@ void Cloth::movableFilter()
                                 neighbor.push_back(sum);
                                 ptc_bottom.c_pos = sum++;
                             }
-                            else { neighbor.push_back(ptc_bottom.c_pos); }
+                            else
+                            {
+                                neighbor.push_back(ptc_bottom.c_pos);
+                            }
                         }
                     }
 
@@ -259,7 +268,10 @@ void Cloth::movableFilter()
                                 neighbor.push_back(sum);
                                 ptc_top.c_pos = sum++;
                             }
-                            else { neighbor.push_back(ptc_top.c_pos); }
+                            else
+                            {
+                                neighbor.push_back(ptc_top.c_pos);
+                            }
                         }
                     }
                     neighbors.push_back(std::move(neighbor));
@@ -412,7 +424,10 @@ void Cloth::saveToFile(std::string path)
     std::string filepath = "cloth_nodes.txt";
 
     if (path == "") { filepath = "cloth_nodes.txt"; }
-    else { filepath = path; }
+    else
+    {
+        filepath = path;
+    }
 
     std::ofstream f1(filepath.c_str());
 
@@ -432,7 +447,10 @@ void Cloth::saveMovableToFile(std::string path)
     std::string filepath = "cloth_movable.txt";
 
     if (path == "") { filepath = "cloth_movable.txt"; }
-    else { filepath = path; }
+    else
+    {
+        filepath = path;
+    }
 
     std::ofstream f1(filepath.c_str());
 
